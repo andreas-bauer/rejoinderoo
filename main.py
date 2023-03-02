@@ -5,16 +5,16 @@ csv_file_name = 'test.csv'
 MIN_FIELDS = 3
 
 
-def custom_tex_command(selected):
-    amount = len(selected)
+def custom_tex_command(fieldnames):
+    amount = len(fieldnames)
     cmd = f'''\\newcommand{{\\ccomment}}[{amount}]{{
     \\begin{{tcolorbox}}[title=#1, colback=white, coltitle=black, colbacktitle=black!15!white]
-    \\textbf{{{selected[1][0]}:}} #2 \\tcblower
-    \\textbf{{{selected[2][0]}:}} #3
+    \\textbf{{{fieldnames[1]}:}} #2 \\tcblower
+    \\textbf{{{fieldnames[2]}:}} #3
     '''
 
     for i in range(3, amount):
-        cmd += f'  \\\\ \\textbf{{{selected[i][0]}:}} #{i+1} \n'
+        cmd += f'  \\\\ \\textbf{{{fieldnames[i]}:}} #{i+1} \n'
 
     cmd += '\\end{tcolorbox}\n}'
     return cmd
@@ -29,10 +29,11 @@ try:
             exit()
 
         selected = pick(reader.fieldnames,
-            'Select at least three fields (ID, reviewer comment, author response)',
-            multiselect=True, min_selection_count=MIN_FIELDS)
+                        'Select at least three fields (ID, reviewer comment, author response)',
+                        multiselect=True, min_selection_count=MIN_FIELDS)
+        selected_fields = [s[0] for s in selected]
 
-        cmd = custom_tex_command(selected)
+        cmd = custom_tex_command(selected_fields)
         print(cmd)
 
 except FileNotFoundError:
