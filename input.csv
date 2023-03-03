@@ -1,0 +1,12 @@
+ID,Comment,Response,Action,Where,Status,Responsible
+Rev2.1,"While most of the suggestions on how to address the identified issues have been followed sufficiently well, the suggested improvement 1.2 has not been implemented as recommended: ""list all 34 identified specific guidelines for code review of artifacts as answer to RQ1, not only the nine guideline categories currently shown in Table 3. (RQ1 = What are the guidelines, from white and gray literature, for source and test artifact review?) Basically, Table 3 should be at the level of detail provided by Table 4.""","The reviewer emphasized that the switch of Tables 3 and 4 would improve the paper, and we now see the benefits to the reading flow if the tables are switched.","- We have switched Tables 3 and 4. Now Section 4.2 includes the detailed table with all 33 guidelines to answer RQ1. Section 4.3 includes the overview table of nine guideline categories.
+- We adjusted the wording in the ""Answer to RQ1/2"" boxes to ensure consistency with the switched tables.",Section 4.2; Section 4.3,done,Andreas
+Rev3.1,all figures and tables need to mention in text,"We agree with the reviewer that all figures and tables should be mentioned in the text, but we could not identify a missing reference to a table or figure.
+ 
+The figures and tables are mentioned in the text as follows:
+- Figure 1 on page 8
+- Figure 2 on page 13
+- Table 1 on pages 8 and 9
+- Table 2 on pages 9 and 10
+- Table 3 on pages 12, 14, and 16
+- Table 4 on page 16",- No action,whole manuscript,done,Andreas
