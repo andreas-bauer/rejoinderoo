@@ -1,3 +1,4 @@
+import sys
 import csv
 from pick import pick
 
@@ -62,6 +63,11 @@ def create_box(row, fieldnames):
 
 cmd = ''
 box_cmd = ''
+
+has_arguments = len(sys.argv) > 1
+if has_arguments:
+    CSV_FILE = sys.argv[1]
+
 try:
     with open(CSV_FILE, 'r', encoding='utf8') as csv_file:
         reader = csv.DictReader(csv_file)
