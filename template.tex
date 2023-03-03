@@ -1,0 +1,75 @@
+\documentclass[a4paper,11pt, parskip=half]{scrartcl}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{eurosym}
+\usepackage{soul}
+\usepackage{tcolorbox}
+\usepackage{palatino}
+
+\usepackage{fancyhdr}
+\usepackage{fancybox}
+\usepackage{fancyvrb}
+
+\RequirePackage[authoryear]{natbib}
+
+\usepackage{a4wide}
+
+\newcommand{\paperid}{YOUR PAPER ID}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LO]{\paperid{}}
+% even pages
+\fancyhead[RE]{\paperid{}}
+% odd/even pages
+\fancyhead[RO,LE]{\thepage}
+
+
+%\usepackage[linktoc=all]{hyperref}
+\usepackage[linktoc=all,bookmarks,bookmarksopen=true,bookmarksnumbered=true]{hyperref}
+
+\hypersetup{
+pdfauthor = {YOUR NAME},
+pdftitle = {\paperid{}},
+pdfsubject = {},
+colorlinks = false,
+}
+
+%%%%%custom-command%%%%%
+
+\begin{document}
+
+\thispagestyle{plain}
+
+\begin{center}
+Response to reviewers: \\[1em]
+
+ {\Large YOUR TITLE} \vspace{0.5cm} \\
+ {\paperid{}} \vspace{0.5cm} \\
+ \today \vspace{0.5cm} \\
+\end{center}
+
+
+Dear Editor, \\
+
+First of all, we would like to thank you and the reviewers for the time and effort that you have put into providing us with this detailed, valuable, and in-depth feedback.
+
+All reviewer comments …
+
+We hope you find the new version of the manuscript to your satisfaction and look forward to any further feedback you may provide.
+\\[3em]
+Best regards,
+
+YOUR NAME
+
+\newpage
+
+%%%%%ccomments%%%%%
+
+%% Uncomment if references needed
+% \bibliographystyle{unsrt}
+% \bibliography{references}
+
+\end{document}
