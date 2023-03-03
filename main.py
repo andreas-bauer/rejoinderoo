@@ -1,8 +1,12 @@
 import csv
 from pick import pick
 
-csv_file_name = 'test.csv'
+CSV_FILE = 'input.csv'
+TEMPLATE_FILE = 'template.tex'
+TARGET_FILE = 'out.tex'
 MIN_FIELDS = 3
+PLACEHOLDER_CMD = '%%%%%custom-command%%%%%\n'
+PLACEHOLDER_CCOMMENT = '%%%%%ccomments%%%%%\n'
 
 
 def custom_tex_command(fieldnames):
@@ -16,12 +20,50 @@ def custom_tex_command(fieldnames):
     for i in range(3, amount):
         cmd += f'  \\\\ \\textbf{{{fieldnames[i]}:}} #{i+1} \n'
 
-    cmd += '\\end{tcolorbox}\n}'
+    cmd += '\\end{tcolorbox}\n}\n'
     return cmd
 
 
+def to_latex(s: str) -> str:
+    replacements = {
+        '&': '\\&',
+        '%': '\\%',
+        '$': '\\$',
+        '#': '\\#',
+        '_': '\\_',
+        '{': '\\{',
+        '}': '\\}',
+        '~': '\\textasciitilde',
+        '^': '\\textasciicircum',
+        '\\': '\\textbackslash',
+        '|': '\\textbar',
+        '<': '\\textless',
+        '>': '\\textgreater',
+        '[': '{[}',
+        ']': '{]}',
+    }
+
+    tex = "".join(replacements.get(c, c) for c in s)
+
+    tex = tex.replace('\n-', '\n\\\\-')
+    tex = tex.replace('\n -', '\n\\\\ -')
+
+    return tex
+
+
+def create_box(row, fieldnames):
+    box_cmd = '\n\n\\ccomment'
+
+    for field in fieldnames:
+        tex = to_latex(row[field])
+        box_cmd += f'{{\n{tex}\n}}'
+    return box_cmd
+
+
+cmd = ''
+box_cmd = ''
 try:
-    with open(csv_file_name, 'r', encoding='utf8') as csv_file:
+    with open(CSV_FILE, 'r', encoding='utf8') as csv_file:
         reader = csv.DictReader(csv_file)
 
         if len(reader.fieldnames) < MIN_FIELDS:
@@ -34,7 +76,28 @@ try:
         selected_fields = [s[0] for s in selected]
 
         cmd = custom_tex_command(selected_fields)
-        print(cmd)
+
+        for row in reader:
+            box_cmd += create_box(row, selected_fields)
 
 except FileNotFoundError:
-    print("Unable to find", csv_file_name)
+    print('Unable to find', CSV_FILE)
+
+try:
+    final = ''
+    with open(TEMPLATE_FILE, 'r', encoding='utf8') as template:
+        for line in template:
+            if line == PLACEHOLDER_CMD:
+                line = cmd
+
+            if line == PLACEHOLDER_CCOMMENT:
+                line = box_cmd
+
+            final += line
+
+    with open(TARGET_FILE, 'w', encoding='utf8') as target:
+        target.write(final)
+        print('Done! Created LaTeX file:', TARGET_FILE)
+
+except FileNotFoundError:
+    print('Unable to find', TEMPLATE_FILE)
