@@ -6,8 +6,8 @@ CSV_FILE = 'input.csv'
 TEMPLATE_FILE = 'template.tex'
 TARGET_FILE = 'out.tex'
 MIN_FIELDS = 3
-PLACEHOLDER_CMD = '%%%%%custom-command%%%%%\n'
-PLACEHOLDER_CCOMMENT = '%%%%%ccomments%%%%%\n'
+PLACEHOLDER_CMD = '%%%%%custom-command%%%%%'
+PLACEHOLDER_CCOMMENT = '%%%%%ccomments%%%%%'
 
 
 def custom_tex_command(fieldnames: list[str]) -> str:
@@ -93,13 +93,9 @@ try:
     final = ''
     with open(TEMPLATE_FILE, 'r', encoding='utf8') as template:
         for line in template:
-            if line == PLACEHOLDER_CMD:
-                line = cmd
-
-            if line == PLACEHOLDER_CCOMMENT:
-                line = box_cmd
-
-            final += line
+            replaced = line.replace(PLACEHOLDER_CMD, cmd)
+            replaced = replaced.replace(PLACEHOLDER_CCOMMENT, box_cmd)
+            final += replaced
 
     with open(TARGET_FILE, 'w', encoding='utf8') as target:
         target.write(final)
