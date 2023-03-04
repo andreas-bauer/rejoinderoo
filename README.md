@@ -1,6 +1,6 @@
 # Rejoinderoo
 
-<p align="center"><img src="logo.png"></p>
+<p align="center"><img src="images/logo.png"></p>
 
 Rejoinderoo creates a rejoinder (response to reviewers) LaTeX document based on a CSV file.
 
@@ -32,7 +32,25 @@ python3 main.py
 python3 main.py my_file.csv
 ```
 
-Step 4) The created LaTeX file has the name `out.tex`
+Step 4)
+
+Select all fields (columns) from the CSV file
+that shall be included in the generated document.
+
+```sh
+ $ python3 main.py
+ Select at least three fields (ID, reviewer comment, author response)
+
+   (x) ID
+   (x) Comment
+ * (x) Response
+   ( ) Action
+   ( ) Where
+   ( ) Status
+   ( ) Responsible
+```
+
+Step 5) The created LaTeX file has the name `out.tex`
 
 ## Customization
 
