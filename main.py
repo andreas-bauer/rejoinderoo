@@ -1,10 +1,10 @@
-import sys
+import argparse
+from pathlib import Path
 import csv
 from pick import pick
 
 CSV_FILE = 'input.csv'
 TEMPLATE_FILE = 'template.tex'
-TARGET_FILE = 'out.tex'
 MIN_FIELDS = 3
 PLACEHOLDER_CMD = '%%%%%custom-command%%%%%'
 PLACEHOLDER_CCOMMENT = '%%%%%ccomments%%%%%'
@@ -61,15 +61,16 @@ def create_box(row, fieldnames: list[str]) -> str:
     return box_cmd
 
 
-cmd = ''
-box_cmd = ''
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='desc')
+    parser.add_argument('comment_file', type=Path, help='The comment csv file')
+    parser.add_argument('tex_file', type=Path, help='The TeX output file')
 
-has_arguments = len(sys.argv) > 1
-if has_arguments:
-    CSV_FILE = sys.argv[1]
+    args = parser.parse_args()
+    box_cmd = ''
+    cmd = ''
 
-try:
-    with open(CSV_FILE, 'r', encoding='utf8') as csv_file:
+    with open(args.comment_file, 'r', encoding='utf8') as csv_file:
         reader = csv.DictReader(csv_file)
 
         if len(reader.fieldnames) < MIN_FIELDS:
@@ -86,20 +87,13 @@ try:
         for row in reader:
             box_cmd += create_box(row, selected_fields)
 
-except FileNotFoundError:
-    print('Unable to find', CSV_FILE)
-
-try:
     final = ''
     with open(TEMPLATE_FILE, 'r', encoding='utf8') as template:
         for line in template:
             replaced = line.replace(PLACEHOLDER_CMD, cmd)
             replaced = replaced.replace(PLACEHOLDER_CCOMMENT, box_cmd)
             final += replaced
-
-    with open(TARGET_FILE, 'w', encoding='utf8') as target:
+    args.tex_file.parent.mkdir(parents=True, exist_ok=True)
+    with open(args.tex_file, 'w', encoding='utf8') as target:
         target.write(final)
-        print('Done! Created LaTeX file:', TARGET_FILE)
-
-except FileNotFoundError:
-    print('Unable to find', TEMPLATE_FILE)
+    print('Done! Created LaTeX file:', args.tex_file)
