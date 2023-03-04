@@ -68,6 +68,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     box_cmd = ''
+    cmd = ''
 
     with open(args.comment_file, 'r', encoding='utf8') as csv_file:
         reader = csv.DictReader(csv_file)
@@ -92,7 +93,7 @@ if __name__ == '__main__':
             replaced = line.replace(PLACEHOLDER_CMD, cmd)
             replaced = replaced.replace(PLACEHOLDER_CCOMMENT, box_cmd)
             final += replaced
-    args.tex_file.mkdir(parents=True, exist_ok=True)
+    args.tex_file.parent.mkdir(parents=True, exist_ok=True)
     with open(args.tex_file, 'w', encoding='utf8') as target:
         target.write(final)
-        print('Done! Created LaTeX file:', args.tex_file)
+    print('Done! Created LaTeX file:', args.tex_file)
