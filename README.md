@@ -1,5 +1,7 @@
 # Rejoinderoo
 
+<p align="center"><img src="logo.png"></p>
+
 Rejoinderoo creates a rejoinder (response to reviewers) LaTeX document based on a CSV file.
 
 ## Prerequisites
@@ -36,3 +38,9 @@ Step 4) The created LaTeX file has the name `out.tex`
 
 To customize the generated LaTeX file, you can either adjust [template.tex](./template.tex) or replace it with your own file.
 The script will replace the placeholder `%%%%%custom-command%%%%%` and `%%%%%ccomments%%%%%` in the [template.tex](./template.tex) file with the generated content.
+
+## License
+
+Copyright (c) 2023 Andreas Bauer
+
+This work (source code) is licensed under  [MIT](./LICENSE).
