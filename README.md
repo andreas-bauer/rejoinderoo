@@ -19,20 +19,17 @@ like the [input.csv](./input.csv).
 At least three columns are required to be able to parse the CSV file.
 Have a look at  as an example of
 
-Step 2) (optional) Copy the exported CSV file in this folder and rename it to `input.csv`.
-
-Step 3) Run `main.py` without any arguments to use `input.csv` as input,
-or specify the target file as an argument.
+Step 2) Run `main.py` with two arguments: the input CSV file and the output file name.
 
 ```sh
-# use input.csv
-python3 main.py
+# show help
+python3 main.py -h
 
-# use a specific file
-python3 main.py my_file.csv
+# usage
+python3 main.py input.csv output.tex
 ```
 
-Step 4)
+Step 3)
 
 Select all fields (columns) from the CSV file
 that shall be included in the generated document.
@@ -49,8 +46,6 @@ that shall be included in the generated document.
    ( ) Status
    ( ) Responsible
 ```
-
-Step 5) The created LaTeX file has the name `out.tex`
 
 ## Customization
 
