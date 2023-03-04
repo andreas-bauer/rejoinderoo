@@ -10,7 +10,7 @@ PLACEHOLDER_CMD = '%%%%%custom-command%%%%%\n'
 PLACEHOLDER_CCOMMENT = '%%%%%ccomments%%%%%\n'
 
 
-def custom_tex_command(fieldnames):
+def custom_tex_command(fieldnames: list[str]) -> str:
     amount = len(fieldnames)
     cmd = f'''\\newcommand{{\\ccomment}}[{amount}]{{
     \\begin{{tcolorbox}}[title=#1, colback=white, coltitle=black, colbacktitle=black!15!white]
@@ -52,7 +52,7 @@ def to_latex(s: str) -> str:
     return tex
 
 
-def create_box(row, fieldnames):
+def create_box(row, fieldnames: list[str]) -> str:
     box_cmd = '\n\n\\ccomment'
 
     for field in fieldnames:
