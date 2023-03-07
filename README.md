@@ -3,6 +3,7 @@
 <p align="center"><img src="images/logo.png"></p>
 
 Rejoinderoo creates a rejoinder (response to reviewers) LaTeX document based on a CSV file.
+An example of a generated rejoinder document is shown in [example.pdf](./example.pdf).
 
 ## Prerequisites
 
