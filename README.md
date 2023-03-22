@@ -9,8 +9,9 @@ An example of a generated rejoinder document is shown in [example.pdf](./example
 
 Rejoinderoo depends on Pick to provide the selection interface for
 data fields of the CSV file.
+You have to install the dependencies first. 
 
-`pip3 install pick`
+`pip install -r requirements.txt `
 
 ## Usage
 
