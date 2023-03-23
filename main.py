@@ -12,8 +12,9 @@ PLACEHOLDER_CCOMMENT = '%%%%%ccomments%%%%%'
 
 def custom_tex_command(fieldnames: list[str]) -> str:
     amount = len(fieldnames)
-    cmd = f'''\\newcommand{{\\ccomment}}[{amount}]{{
-    \\begin{{tcolorbox}}[title=#1, colback=white, coltitle=black, colbacktitle=black!15!white]
+    colors = '\\colorlet{revColorDefault}{black!15!white}\n\n'
+    cmd = colors + f'''\\newcommand{{\\ccomment}}[{amount}]{{
+    \\begin{{tcolorbox}}[title=#1, colback=white, coltitle=black, colbacktitle=revColorDefault]
     \\textbf{{{fieldnames[1]}:}} #2 \\tcblower
     \\textbf{{{fieldnames[2]}:}} #3
     '''
