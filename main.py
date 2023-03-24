@@ -8,21 +8,29 @@ TEMPLATE_FILE = 'template.tex'
 MIN_FIELDS = 3
 PLACEHOLDER_CMD = '%%%%%custom-command%%%%%'
 PLACEHOLDER_CCOMMENT = '%%%%%ccomments%%%%%'
+COLOR_REV_DEFAULT = 'colorRevDefault'
 
 
 def custom_tex_command(fieldnames: list[str]) -> str:
     amount = len(fieldnames)
-    colors = '\\colorlet{revColorDefault}{black!15!white}\n\n'
-    cmd = colors + f'''\\newcommand{{\\ccomment}}[{amount}]{{
-    \\begin{{tcolorbox}}[title=#1, colback=white, coltitle=black, colbacktitle=revColorDefault]
-    \\textbf{{{fieldnames[1]}:}} #2 \\tcblower
-    \\textbf{{{fieldnames[2]}:}} #3
+    colors = '\\colorlet{'+COLOR_REV_DEFAULT+'}{black!15!white}\n\n'
+    cmd = colors + f'''\\newcommand{{\\ccomment}}[{amount + 1}]{{
+    \\begin{{tcolorbox}}[title=#2, colback=white, coltitle=black, colbacktitle=#1]
+    \\textbf{{{fieldnames[1]}:}} #3 \\tcblower
+    \\textbf{{{fieldnames[2]}:}} #4
     '''
 
     for i in range(3, amount):
-        cmd += f'  \\\\ \\textbf{{{fieldnames[i]}:}} #{i+1} \n'
+        cmd += f'  \\\\ \\textbf{{{fieldnames[i]}:}} #{i+2} \n'
 
     cmd += '\\end{tcolorbox}\n}\n'
+    return cmd
+
+
+def color_command(rev_ids: list[str]) -> str:
+    cmd = ''
+    for rev_id in rev_ids:
+        cmd += f'\\colorlet{{color{rev_id}}}{{black!15!white}}\n'
     return cmd
 
 
@@ -53,8 +61,18 @@ def to_latex(s: str) -> str:
     return tex
 
 
-def create_box(row, fieldnames: list[str]) -> str:
+def extract_rev_id(full_id: str) -> str:
+    return full_id.split(".")[0].split("-")[0].split(":")[0]
+
+
+def create_box(row, fieldnames: list[str], reviewer_ids: set) -> str:
     box_cmd = '\n\n\\ccomment'
+
+    rev_id = extract_rev_id(row[fieldnames[0]])
+    if rev_id in reviewer_ids:
+        box_cmd += f'{{\ncolor{rev_id}\n}}'
+    else:
+        box_cmd += f'{{\n{COLOR_REV_DEFAULT}\n}}'
 
     for field in fieldnames:
         tex = to_latex(row[field])
@@ -70,6 +88,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     box_cmd = ''
     cmd = ''
+    color_cmd = ''
 
     with open(args.comment_file, 'r', encoding='utf8') as csv_file:
         reader = csv.DictReader(csv_file)
@@ -85,13 +104,20 @@ if __name__ == '__main__':
 
         cmd = custom_tex_command(selected_fields)
 
+        reviewer_ids = []
         for row in reader:
-            box_cmd += create_box(row, selected_fields)
+            rev_id = extract_rev_id(row[selected_fields[0]])
+            if rev_id not in reviewer_ids:
+                reviewer_ids.append(rev_id)
+
+            box_cmd += create_box(row, selected_fields, reviewer_ids)
+
+        color_cmd = color_command(reviewer_ids)
 
     final = ''
     with open(TEMPLATE_FILE, 'r', encoding='utf8') as template:
         for line in template:
-            replaced = line.replace(PLACEHOLDER_CMD, cmd)
+            replaced = line.replace(PLACEHOLDER_CMD, color_cmd + cmd)
             replaced = replaced.replace(PLACEHOLDER_CCOMMENT, box_cmd)
             final += replaced
     args.tex_file.parent.mkdir(parents=True, exist_ok=True)
