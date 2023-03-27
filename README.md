@@ -5,6 +5,8 @@
 Rejoinders creates a rejoinder (response to reviewers) LaTeX document based on a CSV file.
 An example of a generated rejoinder document is shown in [example.pdf](./example.pdf).
 
+<p align="center"><img src="images/screenshot.png"></p>
+
 ## Prerequisites
 
 Rejoinders depends on Pick to provide the selection interface for
