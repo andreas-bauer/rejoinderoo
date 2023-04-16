@@ -77,7 +77,7 @@ def create_box(row, fieldnames: list[str], reviewer_ids: set) -> str:
     for field in fieldnames:
         tex = to_latex(row[field])
         tex = tex.rstrip()
-        box_cmd += f'{{\n{tex}\n}}'
+        box_cmd += f'{{ % {field}\n{tex}\n}}'
     return box_cmd
 
 
