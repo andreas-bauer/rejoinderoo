@@ -15,7 +15,7 @@ def custom_tex_command(fieldnames: list[str]) -> str:
     amount = len(fieldnames)
     colors = '\\colorlet{'+COLOR_REV_DEFAULT+'}{black!15!white}\n\n'
     cmd = colors + f'''\\newcommand{{\\ccomment}}[{amount + 1}]{{
-    \\begin{{tcolorbox}}[title=#2, colback=white, coltitle=black, colbacktitle=#1]
+    \\begin{{tcolorbox}}[title=#2, breakable, colback=white, coltitle=black, colbacktitle=#1]
     \\textbf{{{fieldnames[1]}:}} #3 \\tcblower
     \\textbf{{{fieldnames[2]}:}} #4
     '''
