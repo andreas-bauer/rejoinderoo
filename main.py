@@ -1,6 +1,7 @@
 import argparse
-from pathlib import Path
 import csv
+from pathlib import Path
+
 from pick import pick
 
 CSV_FILE = 'input.csv'
