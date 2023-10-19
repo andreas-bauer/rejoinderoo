@@ -95,7 +95,8 @@ if __name__ == '__main__':
         reader = csv.DictReader(csv_file)
 
         if len(reader.fieldnames) < MIN_FIELDS:
-            print(f'CSV file must have at least {MIN_FIELDS} columns but has {len(reader.fieldnames)}.\nUnable to proceed.')
+            print(f'CSV file must have at least {MIN_FIELDS} columns but has {len(reader.fieldnames)}'
+                  + '.\nUnable to proceed.')
             exit()
 
         selected = pick(reader.fieldnames,
