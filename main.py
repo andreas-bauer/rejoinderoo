@@ -1,5 +1,6 @@
 import argparse
 import csv
+import sys
 from pathlib import Path
 
 from pick import pick
@@ -98,7 +99,7 @@ if __name__ == '__main__':
         if len(reader.fieldnames) < MIN_FIELDS:
             print(f'CSV file must have at least {MIN_FIELDS} columns but has {len(reader.fieldnames)}'
                   + '.\nUnable to proceed.')
-            exit()
+            sys.exit()
 
         selected = pick(reader.fieldnames,
                         'Select at least three fields (ID, reviewer comment, author response)',
