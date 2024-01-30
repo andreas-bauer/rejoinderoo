@@ -14,7 +14,7 @@ data fields of the CSV file.
 You have to install the dependencies first.
 
 ```sh
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 ## Usage
