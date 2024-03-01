@@ -71,6 +71,6 @@ The script will replace the placeholder `%%%%%custom-command%%%%%` and `%%%%%cco
 
 ## License
 
-Copyright © 2023 Andreas Bauer
+Copyright © 2023-2024 Andreas Bauer
 
 This work (source code) is licensed under  [MIT](./LICENSE).
