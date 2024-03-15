@@ -1,2 +1,6 @@
 out.tex
 out.pdf
+
+# Ignore all CSV files, except input.csv
+*.csv
+!input.csv
