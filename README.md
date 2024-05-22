@@ -9,9 +9,11 @@ An example of a generated rejoinder document is shown in [example.pdf](./example
 
 ## Prerequisites
 
+First, ensure that you have a [working Python 3 environment installed](https://docs.python.org/3/using/index.html).
+
 Rejoinderoo depends on [Pick](https://pypi.org/project/pick/) to provide the selection interface for
 data fields of the CSV file.
-You have to install the dependencies first.
+Install the dependencies using the `requirements.txt` file.
 
 ```sh
 pip3 install -r requirements.txt
