@@ -16,6 +16,7 @@ You have to install the dependencies first.
 ```sh
 pip3 install -r requirements.txt
 ```
+(Tip: If you are using brew and the dependencies installation does not work, try to create a virtual environemt.) 
 
 ## Usage
 
