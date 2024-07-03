@@ -1,5 +1,6 @@
 import argparse
 import csv
+import os
 import sys
 from pathlib import Path
 
@@ -135,4 +136,4 @@ if __name__ == '__main__':
     args.tex_file.parent.mkdir(parents=True, exist_ok=True)
     with open(args.tex_file, 'w', encoding='utf8') as target:
         target.write(final)
-    print('Done! Created LaTeX file:', args.tex_file)
+    print(f'Done! Created LaTeX document: file://{os.getcwd()}/{args.tex_file}')
