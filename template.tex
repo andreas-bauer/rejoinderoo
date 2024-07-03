@@ -18,7 +18,11 @@
 
 \tcbuselibrary{breakable}
 
-\newcommand{\paperid}{YOUR PAPER ID}
+%%%%%%%%%%%%%%%%%%%%%%%%
+%% Paper Title and ID %%
+%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\paperId}{YOUR PAPER ID}
+\newcommand{\paperTitle}{YOUR TITLE}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -29,12 +33,10 @@
 \fancyhead[RO,LE]{\thepage}
 
 
-%\usepackage[linktoc=all]{hyperref}
 \usepackage[linktoc=all,bookmarks,bookmarksopen=true,bookmarksnumbered=true]{hyperref}
 
 \hypersetup{
-pdfauthor = {YOUR NAME},
-pdftitle = {\paperid{}},
+pdftitle = {\paperId{}},
 pdfsubject = {},
 colorlinks = false,
 }
@@ -48,8 +50,8 @@ colorlinks = false,
 \begin{center}
 Response to reviewers: \\[1em]
 
- {\Large YOUR TITLE} \vspace{0.5cm} \\
- {\paperid{}} \vspace{0.5cm} \\
+ {\Large \paperTitle} \vspace{0.5cm} \\
+ {\paperId{}} \vspace{0.5cm} \\
  \today \vspace{0.5cm} \\
 \end{center}
 
