@@ -117,7 +117,7 @@ if __name__ == '__main__':
             multiselect=True,
             min_selection_count=MIN_FIELDS,
         )
-        selected_fields: list[str] = [s[0] for s in selected if type(s) == tuple]
+        selected_fields: list[str] = [s[0] for s in selected if type(s) is tuple]
 
         cmd = custom_tex_command(selected_fields)
 
