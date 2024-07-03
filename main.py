@@ -71,7 +71,7 @@ def extract_rev_id(full_id: str) -> str:
     return full_id.split(".")[0].split("-")[0].split(":")[0]
 
 
-def create_box(row, fieldnames: list[str], reviewer_ids: set) -> str:
+def create_box(row, fieldnames: list[str], reviewer_ids: list[str]) -> str:
     box_cmd = '\n\n\\ccomment'
 
     rev_id = extract_rev_id(row[fieldnames[0]])
@@ -117,19 +117,19 @@ if __name__ == '__main__':
             multiselect=True,
             min_selection_count=MIN_FIELDS,
         )
-        selected_fields = [s[0] for s in selected]
+        selected_fields: list[str] = [s[0] for s in selected if type(s) == tuple]
 
         cmd = custom_tex_command(selected_fields)
 
-        reviewer_ids = []
+        all_reviewer_ids: list[str] = []
         for row in reader:
             rev_id = extract_rev_id(row[selected_fields[0]])
-            if rev_id not in reviewer_ids:
-                reviewer_ids.append(rev_id)
+            if rev_id not in all_reviewer_ids:
+                all_reviewer_ids.append(rev_id)
 
-            box_cmd += create_box(row, selected_fields, reviewer_ids)
+            box_cmd += create_box(row, selected_fields, all_reviewer_ids)
 
-        color_cmd = color_command(reviewer_ids)
+        color_cmd = color_command(all_reviewer_ids)
 
     final = ''
     with open(TEMPLATE_FILE, 'r', encoding='utf8') as template:
