@@ -100,6 +100,10 @@ if __name__ == '__main__':
     with open(args.comment_file, 'r', encoding='utf8') as csv_file:
         reader = csv.DictReader(csv_file)
 
+        if reader.fieldnames is None:
+            print("Unable to detect columns in CSV file")
+            sys.exit()
+
         if len(reader.fieldnames) < MIN_FIELDS:
             print(
                 f'CSV file must have at least {MIN_FIELDS} columns but has {len(reader.fieldnames)}'
