@@ -15,12 +15,15 @@ COLOR_REV_DEFAULT = 'colorRevDefault'
 
 def custom_tex_command(fieldnames: list[str]) -> str:
     amount = len(fieldnames)
-    colors = '\\colorlet{'+COLOR_REV_DEFAULT+'}{black!15!white}\n\n'
-    cmd = colors + f'''\\newcommand{{\\ccomment}}[{amount + 1}]{{
+    colors = '\\colorlet{' + COLOR_REV_DEFAULT + '}{black!15!white}\n\n'
+    cmd = (
+        colors
+        + f'''\\newcommand{{\\ccomment}}[{amount + 1}]{{
     \\begin{{tcolorbox}}[title=#2, breakable, colback=white, coltitle=black, colbacktitle=#1]
     \\textbf{{{fieldnames[1]}:}} #3 \\tcblower
     \\textbf{{{fieldnames[2]}:}} #4
     '''
+    )
 
     for i in range(3, amount):
         cmd += f'  \\\\ \\textbf{{{fieldnames[i]}:}} #{i+2} \n'
@@ -97,13 +100,18 @@ if __name__ == '__main__':
         reader = csv.DictReader(csv_file)
 
         if len(reader.fieldnames) < MIN_FIELDS:
-            print(f'CSV file must have at least {MIN_FIELDS} columns but has {len(reader.fieldnames)}'
-                  + '.\nUnable to proceed.')
+            print(
+                f'CSV file must have at least {MIN_FIELDS} columns but has {len(reader.fieldnames)}'
+                + '.\nUnable to proceed.'
+            )
             sys.exit()
 
-        selected = pick(reader.fieldnames,
-                        'Select at least three fields (ID, reviewer comment, author response)',
-                        multiselect=True, min_selection_count=MIN_FIELDS)
+        selected = pick(
+            reader.fieldnames,
+            'Select at least three fields (ID, reviewer comment, author response)',
+            multiselect=True,
+            min_selection_count=MIN_FIELDS,
+        )
         selected_fields = [s[0] for s in selected]
 
         cmd = custom_tex_command(selected_fields)
