@@ -97,10 +97,13 @@ if __name__ == '__main__':
     color_cmd = ''
 
     with open(args.comment_file, 'r', encoding='utf8') as csv_file:
-        reader = csv.DictReader(csv_file)
+        dialect = csv.Sniffer().sniff(csv_file.readline(), delimiters=',;')
+        csv_file.seek(0)
+
+        reader = csv.DictReader(csv_file, delimiter=dialect.delimiter)
 
         if reader.fieldnames is None:
-            print("Unable to detect columns in CSV file")
+            print('Unable to detect columns in CSV file')
             sys.exit()
 
         if len(reader.fieldnames) < MIN_FIELDS:
