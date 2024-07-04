@@ -122,6 +122,10 @@ if __name__ == '__main__':
 
         all_reviewer_ids: list[str] = []
         for row in reader:
+            is_empty_row = not any(row.values())
+            if is_empty_row:
+                continue
+
             rev_id = extract_rev_id(row[selected_fields[0]])
             if rev_id not in all_reviewer_ids:
                 all_reviewer_ids.append(rev_id)
