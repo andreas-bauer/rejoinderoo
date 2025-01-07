@@ -146,4 +146,7 @@ if __name__ == '__main__':
     args.tex_file.parent.mkdir(parents=True, exist_ok=True)
     with open(args.tex_file, 'w', encoding='utf8') as target:
         target.write(final)
-    print(f'Done! Created LaTeX document: file://{Path.cwd()}/{args.tex_file}')
+    print('✅ Created LaTeX document:')
+    print(f'└─ file://{Path.cwd()}/{args.tex_file}')
+    print('⭐️ If you enjoy this project, please consider giving it a star on GitHub')
+    print('└─ https://github.com/andreas-bauer/rejoinderoo')
