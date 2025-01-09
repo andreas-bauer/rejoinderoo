@@ -25,7 +25,7 @@ Step 1) Prepare the response to reviewers in a spreadsheet and export it as a CS
 like the [input.csv](./input.csv).
 
 At least three columns are required to be able to parse the CSV file.
-Have a look at  as an example of
+Have a look at as an example of
 
 Step 2) Run `main.py` with two arguments: the input CSV file and the output file name.
 
@@ -73,6 +73,6 @@ The script will replace the placeholder `%%%%%custom-command%%%%%` and `%%%%%cco
 
 ## License
 
-Copyright © 2023-2024 Andreas Bauer
+Copyright © 2023-2025 Andreas Bauer
 
-This work (source code) is licensed under  [MIT](./LICENSE).
+This work (source code) is licensed under [MIT](./LICENSE).
