@@ -4,3 +4,6 @@ out.pdf
 # Ignore all CSV files, except input.csv
 *.csv
 !input.csv
+
+# Build artifacts
+bin/
