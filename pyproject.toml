@@ -1,8 +1,0 @@
-[project]
-name = 'rejoinderoo'
-version = '1.0.0'
-dependencies = ['pick']
-
-[tool.black]
-line-length = 120
-skip-string-normalization = 1
