@@ -1,15 +1,16 @@
 package main
 
 import (
-	"encoding/csv"
 	"flag"
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/andreas-bauer/rejoinderoo/internal/reader"
 )
 
 func main() {
-	inFile := flag.String("i", "", "file path to input file (CSV or Excel)")
+	inFile := flag.String("i", "./tests/small.csv", "file path to input file (CSV or Excel)")
 	outFile := flag.String("o", "out.tex", "file path to output LaTeX file")
 	flag.Parse()
 
@@ -21,21 +22,27 @@ func main() {
 		panic(msg)
 	}
 
-	file, err := os.Open("input.csv")
+	file, err := os.Open(*inFile)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("Error opening file: %s\n", err)
+		os.Exit(1)
 	}
-	reader := csv.NewReader(file)
-	records, _ := reader.ReadAll()
-
-	columns := records[0]
-	fmt.Println("Columns:")
-	for _, column := range columns {
-		fmt.Printf("%s\n", column)
-	}
+	defer file.Close()
 
 	fmt.Println("Rejoinderoo")
 	fmt.Println("----------------------")
 	fmt.Printf("input: %s\n", *inFile)
 	fmt.Printf("output: %s\n", *outFile)
+	fmt.Println("----------------------")
+
+	r, err := reader.NewCSVReader(file)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	recs := r.Records()
+
+	fmt.Println("Amount of records:", len(recs))
+
 }
