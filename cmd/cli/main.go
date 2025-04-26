@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/andreas-bauer/rejoinderoo/internal/reader"
+	"github.com/andreas-bauer/rejoinderoo/internal/templates"
 )
 
 func main() {
@@ -44,5 +45,7 @@ func main() {
 	recs := r.Records()
 
 	fmt.Println("Amount of records:", len(recs))
+
+	templates.TemplateTest()
 
 }
