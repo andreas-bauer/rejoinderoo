@@ -7,7 +7,6 @@ import (
 
 // CSVReader implements FileReader for CSV files
 type CSVReader struct {
-	file    io.Reader
 	headers []string
 	records [][]string
 }
@@ -15,7 +14,6 @@ type CSVReader struct {
 // NewCSVReader creates a new CSVReader from an io.Reader
 func NewCSVReader(file io.Reader) (*CSVReader, error) {
 	r := &CSVReader{
-		file:    file,
 		headers: []string{},
 		records: [][]string{},
 	}

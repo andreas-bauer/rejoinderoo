@@ -132,37 +132,21 @@ func main() {
 	outFile := flag.String("o", "out.tex", "file path to output LaTeX file")
 	flag.Parse()
 
-	isCSV := strings.HasSuffix(*inFile, ".csv")
-	isExcel := strings.HasSuffix(*inFile, ".xlsx") || strings.HasSuffix(*inFile, ".xls")
-
-	if !isCSV && !isExcel {
-		msg := "Error: Input file must be a CSV or Excel file, but got: " + *inFile
-		panic(msg)
-	}
-
-	file, err := os.Open(*inFile)
-	if err != nil {
-		fmt.Printf("Error opening file: %s\n", err)
-		os.Exit(1)
-	}
-	defer file.Close()
-
 	fmt.Println("Rejoinderoo")
 	fmt.Println("----------------------")
 	fmt.Printf("input: %s\n", *inFile)
 	fmt.Printf("output: %s\n", *outFile)
 	fmt.Println("----------------------")
 
-	r, err := reader.NewExcelReader(file)
+	r, err := reader.NewReader(*inFile)
 	if err != nil {
-		fmt.Println(err)
-		return
+		fmt.Println("Error reading file:", err)
+		fmt.Println("Unable to proceed.")
+
+		os.Exit(1)
 	}
 
-	// fmt.Println("Header2:")
-	// fmt.Println(r.Headers)
-
-	selected := selectColumns(r.Headers)
+	selected := selectColumns(r.Headers())
 	msg := fmt.Sprintf("You selected %d/%d columns:", len(selected), cap(selected))
 	fmt.Println(msg)
 	for _, col := range selected {
