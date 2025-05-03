@@ -9,16 +9,15 @@ import (
 
 // ExcelReader implements FileReader for Excel files
 type ExcelReader struct {
-	file    io.Reader
-	Headers []string
-	Records [][]string
+	headers []string
+	records [][]string
 }
 
+// NewExcelReader creates a new ExcelReader instance
 func NewExcelReader(file io.Reader) (*ExcelReader, error) {
 	r := &ExcelReader{
-		file:    file,
-		Headers: []string{},
-		Records: [][]string{},
+		headers: []string{},
+		records: [][]string{},
 	}
 
 	f, err := excelize.OpenReader(file)
@@ -34,9 +33,24 @@ func NewExcelReader(file io.Reader) (*ExcelReader, error) {
 	}
 
 	if len(rows) > 0 {
-		r.Headers = rows[0]
+		r.headers = rows[0]
 	}
-	r.Records = rows[1:]
+	r.records = rows[1:]
 
 	return r, nil
+}
+
+// HasData checks if the Excel file has any data rows beyond the header
+func (r *ExcelReader) HasData() bool {
+	return len(r.records) > 0
+}
+
+// Headers returns the column headers from the Excel file
+func (r *ExcelReader) Headers() []string {
+	return r.headers
+}
+
+// Records returns the data rows from the Excel file
+func (r *ExcelReader) Records() [][]string {
+	return r.records
 }
