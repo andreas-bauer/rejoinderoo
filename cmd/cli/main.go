@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/andreas-bauer/rejoinderoo/internal/reader"
+	"github.com/andreas-bauer/rejoinderoo/internal/templates"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -147,16 +148,19 @@ func main() {
 	}
 
 	selected := selectColumns(r.Headers())
+
+	if len(selected) < 3 {
+		fmt.Println("Unable to proceed. Requires at least three columns (ID, reviewer comment, author response) to proceed.")
+		os.Exit(1)
+	}
+
 	msg := fmt.Sprintf("You selected %d/%d columns:", len(selected), cap(selected))
 	fmt.Println(msg)
 	for _, col := range selected {
 		fmt.Printf("  - %s\n", col)
 	}
 
-	if len(selected) < 3 {
-		fmt.Println("Unable to proceed. Requires at least three columns (ID, reviewer comment, author response) to proceed.")
-		os.Exit(1)
-	}
+	templates.TemplateTest(r, selected)
 
 	fmt.Println("\n\n")
 

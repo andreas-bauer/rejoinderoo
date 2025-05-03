@@ -2,13 +2,9 @@ package rejoinder
 
 import "github.com/andreas-bauer/rejoinderoo/internal/reader"
 
-type rejoinder struct {
-	file     reader.FileReader
-	template string
-}
+func Generate(r *reader.FileReader, selected []string) string {
 
-func NewRejoinder() *rejoinder {
-	// we need: selected, all headers and records, template
-
-	return &rejoinder{}
+	// TODO: create reviewers struct{} with colors
+	// TODO: create a response struct{}
+	return ""
 }
