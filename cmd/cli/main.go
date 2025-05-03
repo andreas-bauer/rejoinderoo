@@ -153,13 +153,16 @@ func main() {
 	fmt.Printf("output: %s\n", *outFile)
 	fmt.Println("----------------------")
 
-	r, err := reader.NewCSVReader(file)
+	r, err := reader.NewExcelReader(file)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	selected := selectColumns(r.Headers())
+	// fmt.Println("Header2:")
+	// fmt.Println(r.Headers)
+
+	selected := selectColumns(r.Headers)
 	msg := fmt.Sprintf("You selected %d/%d columns:", len(selected), cap(selected))
 	fmt.Println(msg)
 	for _, col := range selected {
