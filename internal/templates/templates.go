@@ -9,24 +9,26 @@ import (
 	"github.com/andreas-bauer/rejoinderoo/internal/reader"
 )
 
-type Response struct {
-	Comment  string
-	Response string
-	Action   string
-	Where    string
-	More     []string
-}
-
 type Header struct {
 	Name string
 	Idx  int
+}
+
+type Record struct {
+	Header string
+	Text   string
+}
+
+type Response struct {
+	ReviewerID string
+	Records    []Record
 }
 
 type Document struct {
 	ReviewerIDs []string
 	LenHeaders  int
 	Headers     []Header
-	Response    []Response
+	Responses   []Response
 }
 
 func TemplateTest(r reader.FileReader, selected []string) {
@@ -49,16 +51,22 @@ func TemplateTest(r reader.FileReader, selected []string) {
 }
 
 func createDoc(r reader.FileReader, selected []string) Document {
-	data := []Response{{
-		Comment:  "More data is required",
-		Response: "You said not more data",
-		Action:   "do nothing",
-		Where:    "Section 4.1",
+	recs := []Record{{
+		Header: "H1",
+		Text:   "Some Text",
 	}, {
-		Comment:  "More data is required",
-		Response: "Ok more data",
-		Action:   "crawl GitHub",
-		Where:    "Section 4.w",
+		Header: "H2",
+		Text:   "Other Text",
+	}, {
+		Header: "H3",
+		Text:   "Different Text",
+	}}
+	data := []Response{{
+		ReviewerID: "R1",
+		Records:    recs,
+	}, {
+		ReviewerID: "R2",
+		Records:    recs,
 	}}
 
 	allRevIDs := extractReviewers(r.Records())
@@ -68,7 +76,7 @@ func createDoc(r reader.FileReader, selected []string) Document {
 		ReviewerIDs: allRevIDs,
 		LenHeaders:  len(selected),
 		Headers:     headers,
-		Response:    data,
+		Responses:   data,
 	}
 }
 
@@ -77,7 +85,7 @@ func asDocHeaders(headers []string) []Header {
 	for idx, h := range headers {
 		header := &Header{
 			Name: h,
-			Idx:  idx,
+			Idx:  idx + 1,
 		}
 		res[idx] = *header
 	}
