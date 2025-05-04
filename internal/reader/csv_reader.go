@@ -5,46 +5,25 @@ import (
 	"io"
 )
 
-// CSVReader implements FileReader for CSV files
-type CSVReader struct {
-	headers []string
-	records [][]string
-}
+type CSVReader struct{}
 
-// NewCSVReader creates a new CSVReader from an io.Reader
-func NewCSVReader(file io.Reader) (*CSVReader, error) {
-	r := &CSVReader{
-		headers: []string{},
-		records: [][]string{},
-	}
-
+func (r CSVReader) Read(file io.Reader) (*TabularData, error) {
 	reader := csv.NewReader(file)
-	headers, err := reader.Read()
+
+	rows, err := reader.ReadAll()
 	if err != nil {
 		return nil, err
 	}
-	r.headers = headers
 
-	records, err := reader.ReadAll()
-	if err != nil {
-		return nil, err
+	if len(rows) == 0 {
+		return &TabularData{
+			Headers: []string{},
+			Records: [][]string{},
+		}, nil
 	}
-	r.records = records
 
-	return r, nil
-}
-
-// HasData checks if the CSV file has any data rows beyond the header
-func (r *CSVReader) HasData() bool {
-	return len(r.records) > 0
-}
-
-// Headers returns the column headers from the CSV file
-func (r *CSVReader) Headers() []string {
-	return r.headers
-}
-
-// Records returns the data rows from the CSV file
-func (r *CSVReader) Records() [][]string {
-	return r.records
+	return &TabularData{
+		Headers: rows[0],
+		Records: rows[1:],
+	}, nil
 }

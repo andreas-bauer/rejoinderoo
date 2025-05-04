@@ -1,29 +1,27 @@
 package reader
 
 import (
-	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
-// FileReader provides a common interface for reading tabular data from different file formats.
-// It supports operations like getting headers and checking if the file has data.
-type FileReader interface {
-	// Headers returns the column headers from the file.
-	Headers() []string
-
-	// HasData checks if the file contains any data rows beyond the header.
-	HasData() bool
-
-	// Records returns the data rows from the file.
-	Records() [][]string
+// TabularReader defines an interface for reading tabular files (CSV, Excel, etc.)
+type TabularReader interface {
+	Read(file io.Reader) (*TabularData, error)
 }
 
-// NewReader creates an appropriate FileReader based on the file extension.
+// TabularData represents the structure of a spreadsheet file with headers and records.
+type TabularData struct {
+	Headers []string
+	Records [][]string
+}
+
+// NewReader creates an appropriate TabularReader based on the file extension.
 // Supported formats: CSV, XLSX, XLS
-func NewReader(filename string) (FileReader, error) {
+func NewReader(filename string) (*TabularData, error) {
 	filename = strings.ToLower(filename)
 
 	// Open file
@@ -33,14 +31,17 @@ func NewReader(filename string) (FileReader, error) {
 	}
 	defer file.Close()
 
+	var r TabularReader
 	// Create appropriate reader based on file extension
 	fileExt := filepath.Ext(filename)
 	switch fileExt {
 	case ".csv":
-		return NewCSVReader(file)
+		r = CSVReader{}
 	case ".xlsx", ".xls":
-		return NewExcelReader(file)
+		r = ExcelReader{}
 	default:
-		return nil, errors.New("Input file must be a CSV (*.csv) or Excel (*.xlsx or *.xls) file, but got: " + filename)
+		return nil, fmt.Errorf("Unsupported file extension: %s", fileExt)
 	}
+
+	return r.Read(file)
 }
