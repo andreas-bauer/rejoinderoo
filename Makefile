@@ -10,6 +10,10 @@ clean: ## Clean up all build artifacts
 	$(GOCMD) clean
 	rm -rf $(BINARY_DIR)
 
+.PHONY: test
+test: ## Run all tests
+	$(GOCMD) test ./... -coverprofile=coverage.out
+
 .PHONY: build
 build: build-server build-cli ## Build all
 
