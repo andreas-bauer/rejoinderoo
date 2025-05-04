@@ -31,9 +31,9 @@ type Document struct {
 	Responses   []Response
 }
 
-func TemplateTest(r reader.FileReader, selected []string) {
+func TemplateTest(tab *reader.TabularData, selected []string) {
 
-	doc := createDoc(r, selected)
+	doc := createDoc(tab, selected)
 
 	var tmplFile = "./internal/templates/latex.tmpl"
 
@@ -50,7 +50,7 @@ func TemplateTest(r reader.FileReader, selected []string) {
 	}
 }
 
-func createDoc(r reader.FileReader, selected []string) Document {
+func createDoc(tab *reader.TabularData, selected []string) Document {
 	recs := []Record{{
 		Header: "H1",
 		Text:   "Some Text",
@@ -69,7 +69,7 @@ func createDoc(r reader.FileReader, selected []string) Document {
 		Records:    recs,
 	}}
 
-	allRevIDs := extractReviewers(r.Records())
+	allRevIDs := extractReviewers(tab.Records)
 	headers := asDocHeaders(selected)
 
 	return Document{
@@ -107,7 +107,7 @@ func extractReviewers(records [][]string) []string {
 }
 
 func extractReviewerID(fullID string) string {
-	return strings.Split(strings.Split(strings.Split(fullID, ".")[0], "-")[0], ":")[0]
+	return strings.Split(strings.Split(strings.Split(strings.Split(fullID, ".")[0], "-")[0], ":")[0], " ")[0]
 }
 
 // searchSlice is a generic linear search function that works for any slice type
