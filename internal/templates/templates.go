@@ -51,35 +51,19 @@ func TemplateTest(td *reader.TabularData) {
 }
 
 func createDoc(td *reader.TabularData) Document {
-	recs := []Record{{
-		Header: "H1",
-		Text:   "Some Text",
-	}, {
-		Header: "H2",
-		Text:   "Other Text",
-	}, {
-		Header: "H3",
-		Text:   "Different Text",
-	}}
-	data := []Response{{
-		ReviewerID: "R1",
-		Records:    recs,
-	}, {
-		ReviewerID: "R2",
-		Records:    recs,
-	}}
-
 	allRevIDs := extractReviewers(td.Records)
 	headers := asDocHeaders(td.Headers)
+	responses := asDocResponses(td.Headers, td.Records)
 
 	return Document{
 		ReviewerIDs: allRevIDs,
 		LenHeaders:  len(td.Headers),
 		Headers:     headers,
-		Responses:   data,
+		Responses:   responses,
 	}
 }
 
+// asDocHeaders converts a slice of strings to a slice of Header structs
 func asDocHeaders(headers []string) []Header {
 	var res = make([]Header, len(headers))
 	for idx, h := range headers {
@@ -90,6 +74,30 @@ func asDocHeaders(headers []string) []Header {
 		res[idx] = *header
 	}
 	return res
+}
+
+// asDocResponses converts a slice of strings to a slice of Response structs
+func asDocResponses(headers []string, records [][]string) []Response {
+	var res = make([]Response, len(records))
+	for idx, rec := range records {
+		if len(rec) < 1 {
+			continue
+		}
+		response := &Response{
+			ReviewerID: rec[0],
+			Records:    make([]Record, len(headers)),
+		}
+		for i, h := range headers {
+			record := &Record{
+				Header: h,
+				Text:   rec[i],
+			}
+			response.Records[i] = *record
+		}
+		res[idx] = *response
+	}
+	return res
+
 }
 
 func extractReviewers(records [][]string) []string {
