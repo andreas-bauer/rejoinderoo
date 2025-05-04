@@ -3,16 +3,6 @@
 {{ end -}}
 \colorlet{colorRevDefault}{black!15!white}
 
-\newcommand{\ccomment}[6]{
-    \begin{tcolorbox}[title=\textbf{#2}, colback=white, coltitle=black, colbacktitle=#1]
-    \textbf{Comment:} #3
-    \tcblower
-    \textbf{Response:} #4
-      \\ \textbf{Action:} #5
-  \\ \textbf{Where:} #6
-\end{tcolorbox}
-
-
 
 \newcommand{\response}[{{ .LenHeaders }}]{
     \begin{tcolorbox}[colbacktitle=#1, title=\textbf{#2}, colback=white, coltitle=black]
@@ -24,8 +14,6 @@
     {{- end }}
     {{- end }}
 \end{tcolorbox}
-
-
 
 
 {{ range .Responses}}
