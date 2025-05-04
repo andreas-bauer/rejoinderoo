@@ -159,7 +159,7 @@ func main() {
 		fmt.Printf("  - %s\n", col)
 	}
 
-	// templates.TemplateTest(tab, selected)
+	templates.TemplateTest(tab, selected)
 
 	fmt.Println("\n\n")
 
