@@ -14,23 +14,29 @@
 
 
 
-\newcommand{\ccomment}[{{ .LenHeaders }}]{
-    \begin{tcolorbox}[title=\textbf{#2}, colback=white, coltitle=black, colbacktitle=#1]
+\newcommand{\response}[{{ .LenHeaders }}]{
+    \begin{tcolorbox}[colbacktitle=#1, title=\textbf{#2}, colback=white, coltitle=black]
     \textbf{Comment:} #3
     \tcblower
     {{- range .Headers}}
-    \textbf{ {{ .Name }}:} #{{- .Idx }}
-    {{ end }}
+    {{- if gt .Idx 3}}
+    {{ if gt .Idx 4}}\\ {{ end}}\textbf{ {{ .Name }}:} #{{- .Idx }}
+    {{- end }}
+    {{- end }}
 \end{tcolorbox}
 
-\begin{document}
 
 
-{{ range .Response}}
-Reviewer comment: {{ .Comment }}
-Response: {{ .Response }}
-Action: {{ .Action }}
-Where: {{ .Where }}
+
+{{ range .Responses}}
+\response{
+  {{ if .ReviewerID}}color{{- .ReviewerID}}{{ else }}colorRevDefault{{ end }}
+}
+{{- range .Records}}
+{ % {{- .Header }}
+{{ .Text }}
+}
+{{- end }}
 {{ end }}
 
 \end{document}
