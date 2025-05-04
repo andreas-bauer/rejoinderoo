@@ -31,9 +31,9 @@ type Document struct {
 	Responses   []Response
 }
 
-func TemplateTest(tab *reader.TabularData, selected []string) {
+func TemplateTest(td *reader.TabularData) {
 
-	doc := createDoc(tab, selected)
+	doc := createDoc(td)
 
 	var tmplFile = "./internal/templates/latex.tmpl"
 
@@ -50,7 +50,7 @@ func TemplateTest(tab *reader.TabularData, selected []string) {
 	}
 }
 
-func createDoc(tab *reader.TabularData, selected []string) Document {
+func createDoc(td *reader.TabularData) Document {
 	recs := []Record{{
 		Header: "H1",
 		Text:   "Some Text",
@@ -69,12 +69,12 @@ func createDoc(tab *reader.TabularData, selected []string) Document {
 		Records:    recs,
 	}}
 
-	allRevIDs := extractReviewers(tab.Records)
-	headers := asDocHeaders(selected)
+	allRevIDs := extractReviewers(td.Records)
+	headers := asDocHeaders(td.Headers)
 
 	return Document{
 		ReviewerIDs: allRevIDs,
-		LenHeaders:  len(selected),
+		LenHeaders:  len(td.Headers),
 		Headers:     headers,
 		Responses:   data,
 	}
