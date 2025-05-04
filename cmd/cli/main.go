@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/andreas-bauer/rejoinderoo/internal/reader"
+	"github.com/andreas-bauer/rejoinderoo/internal/templates"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -138,7 +139,7 @@ func main() {
 	fmt.Printf("output: %s\n", *outFile)
 	fmt.Println("----------------------")
 
-	tab, err := reader.NewReader(*inFile)
+	td, err := reader.NewReader(*inFile)
 	if err != nil {
 		fmt.Println("Error reading file:", err)
 		fmt.Println("Unable to proceed.")
@@ -146,7 +147,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	selected := selectColumns(tab.Headers)
+	selected := selectColumns(td.Headers)
 
 	if len(selected) < 3 {
 		fmt.Println("Unable to proceed. Requires at least three columns (ID, reviewer comment, author response) to proceed.")
@@ -158,8 +159,8 @@ func main() {
 	for _, col := range selected {
 		fmt.Printf("  - %s\n", col)
 	}
-
-	templates.TemplateTest(tab, selected)
+	td.Keep(selected)
+	templates.TemplateTest(td)
 
 	fmt.Println("\n\n")
 

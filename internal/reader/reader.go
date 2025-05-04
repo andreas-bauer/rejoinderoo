@@ -45,3 +45,38 @@ func NewReader(filename string) (*TabularData, error) {
 
 	return r.Read(file)
 }
+
+// Keep filters the headers and records by removing all headers and the corresponding records
+// that are not in the given list of headers to keep.
+func (td *TabularData) Keep(headers []string) {
+	keepMap := make(map[string]bool)
+	for _, h := range headers {
+		keepMap[h] = true
+	}
+
+	var indicesToKeep []int
+	for i, header := range td.Headers {
+		if keepMap[header] {
+			indicesToKeep = append(indicesToKeep, i)
+		}
+	}
+
+	newHeaders := make([]string, 0, len(indicesToKeep))
+	for _, idx := range indicesToKeep {
+		newHeaders = append(newHeaders, td.Headers[idx])
+	}
+
+	newRecords := make([][]string, len(td.Records))
+	for i, record := range td.Records {
+		newRecord := make([]string, 0, len(indicesToKeep))
+		for _, idx := range indicesToKeep {
+			if idx < len(record) {
+				newRecord = append(newRecord, record[idx])
+			}
+		}
+		newRecords[i] = newRecord
+	}
+
+	td.Headers = newHeaders
+	td.Records = newRecords
+}
