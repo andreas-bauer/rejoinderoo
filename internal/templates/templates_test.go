@@ -134,6 +134,28 @@ func TestAsDocResponses(t *testing.T) {
 				},
 			},
 		},
+		{
+			name:    "Contains records with length less than headers",
+			headers: []string{"ID", "Comment", "Response"},
+			records: [][]string{
+				{"Rev2", "Another comment"},
+				{},
+			},
+			expected: []Response{
+				{
+					ReviewerID: "Rev2",
+					Records: []Record{
+						{Header: "ID", Text: "Rev2"},
+						{Header: "Comment", Text: "Another comment"},
+						{Header: "Response", Text: "Another response"},
+					},
+				},
+				{
+					ReviewerID: "",
+					Records: []Record{},
+				},
+			},
+		},
 	}
 
 	for _, tt := range tests {

@@ -9,6 +9,20 @@ import (
 	"github.com/andreas-bauer/rejoinderoo/internal/reader"
 )
 
+// Tmpl is an interface for templates.
+type Tmpl interface {
+	File() string
+	Escape(input string) string
+}
+
+// TemplateType defines the types of templates available.
+type TemplateType string
+
+const (
+	LatexTemplate TemplateType = "latex"
+	TypstTemplate TemplateType = "typst"
+)
+
 type Header struct {
 	Name string
 	Idx  int
@@ -31,22 +45,43 @@ type Document struct {
 	Responses   []Response
 }
 
-func TemplateTest(td *reader.TabularData) {
+func Render(td *reader.TabularData, tmplType TemplateType) {
+	var tt Tmpl
+	switch tmplType {
+	case LatexTemplate:
+		tt = NewLatexTemplate()
+	case TypstTemplate:
+		tt = NewTypstTemplate()
+	default:
+		panic("Unknown template type")
+	}
 
+	// escapeAllStrings(td, tt)
 	doc := createDoc(td)
 
-	var tmplFile = "./internal/templates/latex.tmpl"
-
-	tmpl, err := template.ParseFiles(tmplFile)
+	tmpl, err := template.ParseFiles(tt.File())
 
 	if err != nil {
 		fmt.Println(err.Error())
 		panic(err)
 	}
+
 	err = tmpl.Execute(os.Stdout, doc)
 	if err != nil {
 		fmt.Println(err.Error())
 		panic(err)
+	}
+}
+
+func escapeAllStrings(td *reader.TabularData, tt Tmpl) {
+	for i, h := range td.Headers {
+		td.Headers[i] = tt.Escape(h)
+	}
+
+	for i, rec := range td.Records {
+		for j, r := range rec {
+			td.Records[i][j] = tt.Escape(r)
+		}
 	}
 }
 
@@ -88,9 +123,13 @@ func asDocResponses(headers []string, records [][]string) []Response {
 			Records:    make([]Record, len(headers)),
 		}
 		for i, h := range headers {
+			var text string
+			if i < len(rec) {
+				text = rec[i]
+			} 
 			record := &Record{
 				Header: h,
-				Text:   rec[i],
+				Text:   text,
 			}
 			response.Records[i] = *record
 		}
