@@ -160,7 +160,7 @@ func main() {
 		fmt.Printf("  - %s\n", col)
 	}
 	td.Keep(selected)
-	templates.TemplateTest(td)
+	templates.Render(td, templates.TypstTemplate)
 
 	fmt.Println("\n\n")
 
