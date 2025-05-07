@@ -1,0 +1,39 @@
+#import "@preview/showybox:2.0.4": showybox
+
+{{ range .ReviewerIDs -}}
+#let color{{.}} = gray.lighten(60%)
+{{ end -}}
+#let colorRevDefault = gray.lighten(60%)
+
+
+#let response(
+  color: [],
+  ref:[],
+  ..body,
+) = showybox(
+  frame: (
+    title-color: color,
+  ),
+  title-style: (
+    color: black,
+    weight: "regular",
+    align: left,
+  ),
+  title: ref,
+  ..body
+)
+
+== Test
+
+{{- range .Responses }}
+#response(
+  color: color{{- .ReviewerID}},
+  ref: [ ID: {{ .ID}} ],
+{{- range .Records}}
+  [
+    *{{- .Header }}*: {{ .Text}}
+  ],
+{{- end }}
+)
+{{ end }}
+

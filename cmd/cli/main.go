@@ -8,6 +8,7 @@ import (
 
 	"github.com/andreas-bauer/rejoinderoo/internal/reader"
 	"github.com/andreas-bauer/rejoinderoo/internal/templates"
+	"github.com/andreas-bauer/rejoinderoo/internal/templates/typst"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -160,7 +161,15 @@ func main() {
 		fmt.Printf("  - %s\n", col)
 	}
 	td.Keep(selected)
-	templates.Render(td, templates.TypstTemplate)
+
+	var tmpl templates.Template
+	tmpl = typst.NewTypstTemplate()
+	out, err := tmpl.Render(*td)
+	if err != nil {
+		fmt.Println("Error rendering template:", err)
+		os.Exit(1)
+	}
+	fmt.Println(out)
 
 	fmt.Println("\n\n")
 
