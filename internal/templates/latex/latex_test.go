@@ -15,13 +15,13 @@ func TestAsDocresponses(t *testing.T) {
 			name:    "Single record with single header",
 			headers: []string{"ID", "Comment", "response"},
 			records: [][]string{
-				{"Rev1", "Some comment", "Some response"},
+				{"Rev1.1", "Some comment", "Some response"},
 			},
 			expected: []response{
 				{
 					ReviewerID: "Rev1",
 					Records: []record{
-						{Header: "ID", Text: "Rev1"},
+						{Header: "ID", Text: "Rev1.1"},
 						{Header: "Comment", Text: "Some comment"},
 						{Header: "response", Text: "Some response"},
 					},
@@ -32,14 +32,14 @@ func TestAsDocresponses(t *testing.T) {
 			name:    "Multiple records with multiple headers",
 			headers: []string{"ID", "Comment", "response"},
 			records: [][]string{
-				{"Rev2", "Another comment", "Another response"},
-				{"Rev3", "Third comment", "Third response"},
+				{"Rev2.1", "Another comment", "Another response"},
+				{"Rev3.3", "Third comment", "Third response"},
 			},
 			expected: []response{
 				{
 					ReviewerID: "Rev2",
 					Records: []record{
-						{Header: "ID", Text: "Rev2"},
+						{Header: "ID", Text: "Rev2.1"},
 						{Header: "Comment", Text: "Another comment"},
 						{Header: "response", Text: "Another response"},
 					},
@@ -47,7 +47,7 @@ func TestAsDocresponses(t *testing.T) {
 				{
 					ReviewerID: "Rev3",
 					Records: []record{
-						{Header: "ID", Text: "Rev3"},
+						{Header: "ID", Text: "Rev3.3"},
 						{Header: "Comment", Text: "Third comment"},
 						{Header: "response", Text: "Third response"},
 					},
@@ -58,14 +58,14 @@ func TestAsDocresponses(t *testing.T) {
 			name:    "Contains empty records",
 			headers: []string{"ID", "Comment", "response"},
 			records: [][]string{
-				{"Rev2", "Another comment", "Another response"},
+				{"Rev2.6", "Another comment", "Another response"},
 				{},
 			},
 			expected: []response{
 				{
 					ReviewerID: "Rev2",
 					Records: []record{
-						{Header: "ID", Text: "Rev2"},
+						{Header: "ID", Text: "Rev2.6"},
 						{Header: "Comment", Text: "Another comment"},
 						{Header: "response", Text: "Another response"},
 					},
@@ -80,14 +80,14 @@ func TestAsDocresponses(t *testing.T) {
 			name:    "Contains records with length less than headers",
 			headers: []string{"ID", "Comment", "Response"},
 			records: [][]string{
-				{"Rev2", "Another comment"},
+				{"Rev2.8", "Another comment"},
 				{},
 			},
 			expected: []response{
 				{
 					ReviewerID: "Rev2",
 					Records: []record{
-						{Header: "ID", Text: "Rev2"},
+						{Header: "ID", Text: "Rev2.8"},
 						{Header: "Comment", Text: "Another comment"},
 						{Header: "Response", Text: ""},
 					},

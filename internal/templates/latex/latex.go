@@ -128,7 +128,7 @@ func asDocResponses(headers []string, records [][]string) []response {
 			continue
 		}
 		response := &response{
-			ReviewerID: rec[0],
+			ReviewerID: templates.ExtractReviewerID(rec[0]),
 			Records:    make([]record, len(headers)),
 		}
 		for i, h := range headers {
@@ -147,4 +147,3 @@ func asDocResponses(headers []string, records [][]string) []response {
 	return res
 
 }
-
