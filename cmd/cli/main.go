@@ -171,8 +171,6 @@ func main() {
 	}
 	fmt.Println(out)
 
-	fmt.Println("\n\n")
-
 	fmt.Println("⭐️ If you enjoy this project, please consider giving it a star on GitHub")
 	fmt.Println("└─ https://github.com/andreas-bauer/rejoinderoo")
 }
