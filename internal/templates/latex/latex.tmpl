@@ -1,3 +1,46 @@
+\documentclass[a4paper,11pt, parskip=half]{scrartcl}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{eurosym}
+\usepackage{soul}
+\usepackage{tcolorbox}
+\usepackage{palatino}
+
+\usepackage{fancyhdr}
+\usepackage{fancybox}
+\usepackage{fancyvrb}
+
+\RequirePackage[authoryear]{natbib}
+
+\usepackage{a4wide}
+
+\tcbuselibrary{breakable}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%% Paper Title and ID %%
+%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\paperId}{YOUR PAPER ID}
+\newcommand{\paperTitle}{YOUR TITLE}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LO]{\paperid{}}
+% even pages
+\fancyhead[RE]{\paperid{}}
+% odd/even pages
+\fancyhead[RO,LE]{\thepage}
+
+
+\usepackage[linktoc=all,bookmarks,bookmarksopen=true,bookmarksnumbered=true]{hyperref}
+
+\hypersetup{
+pdftitle = {\paperId{}},
+pdfsubject = {},
+colorlinks = false,
+}
+
 {{ range .ReviewerIDs -}}
 \colorlet{color{{.}}}{black!15!white}
 {{ end -}}
@@ -15,6 +58,41 @@
     {{- end }}
 \end{tcolorbox}
 
+\begin{document}
+
+\thispagestyle{plain}
+
+\begin{center}
+Response to reviewers: \\[1em]
+
+ {\Large \paperTitle} \vspace{0.5cm} \\
+ {\paperId{}} \vspace{0.5cm} \\
+ \today \vspace{0.5cm} \\
+\end{center}
+
+
+Dear Editor, \\
+
+First of all, we would like to thank you and the reviewers for the time and effort that you have put into providing us with this detailed, valuable, and in-depth feedback.
+
+All reviewer comments have been taken into consideration, and effort has been put into addressing them to the best of our abilities, as explained in this letter.
+The comments are indexed using the following scheme: \texttt{Rev<referee no>.<comment no>}.
+Additionally, all changes to the manuscript have been color-coded to make it easier for reviewers and the editor to see our changes.
+
+
+The most impactful changes are the following:
+\begin{itemize}
+  \item ABC
+  \item DEF
+\end{itemize}
+
+We hope you find the new version of the manuscript to your satisfaction and look forward to any further feedback you may provide.
+\\[3em]
+Best regards,
+
+AUTHORS
+
+\newpage
 
 {{ range .Responses}}
 \response{
