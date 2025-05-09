@@ -29,6 +29,15 @@ var (
 	errorStyle              = lipgloss.NewStyle().Foreground(lipgloss.Color("9")).Bold(true)
 	dimCheckedStyle         = lipgloss.NewStyle().Foreground(lipgloss.Color("240")).MarginRight(1)
 	highlightedCheckedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("10")).MarginRight(1)
+	titleStyle              = lipgloss.NewStyle().
+				MarginLeft(1).
+				MarginRight(5).
+				MarginBottom(1).
+				Padding(0, 1).
+				Italic(true).
+				Bold(true).
+				Foreground(lipgloss.Color("#FFF7DB")).
+				Background(lipgloss.Color("#643AFF"))
 )
 
 type itemCheckable struct {
@@ -161,7 +170,8 @@ func (m Model) View() string {
 		return "Exiting...\n"
 	}
 
-	s := ""
+	title := titleStyle.Render("Rejoinderoo")
+	s := title + "\n"
 	help := helpStyle.Render("\nUse ↑/↓ or j/k to navigate, Space to select, Enter to continue, Ctrl+C or Esc to quit.")
 
 	switch m.screen {
@@ -207,9 +217,9 @@ func (m Model) View() string {
 
 	case screenSummary:
 		s += headerStyle.Render("4. Summary:") + "\n"
-		s += fmt.Sprintf("   Selected column: %s\n", selectedStyle.Render(m.selectedColumn))
-		s += fmt.Sprintf("   Selected Format:   %s\n", selectedStyle.Render(m.selectedFormat))
-		s += fmt.Sprintf("   Output Filename:   %s\n", selectedStyle.Render(m.enteredFilename))
+		s += fmt.Sprintf("   Selected Columns: %s\n", selectedStyle.Render(m.selectedColumn))
+		s += fmt.Sprintf("   Selected Format:  %s\n", selectedStyle.Render(m.selectedFormat))
+		s += fmt.Sprintf("   Output Filename:  %s\n", selectedStyle.Render(m.enteredFilename))
 		s += "\n" + selectedStyle.Render("File was generated!") + "\n\n"
 		s += helpStyle.Render("Exiting automatically...")
 	}
