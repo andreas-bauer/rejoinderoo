@@ -14,7 +14,7 @@ import (
 type screen int
 
 const (
-	screencolumn screen = iota
+	screenColumn screen = iota
 	screenFormat
 	screenFilename
 	screenSummary
@@ -22,18 +22,25 @@ const (
 
 // Styles
 var (
-	docStyle      = lipgloss.NewStyle().Margin(1, 2)
-	selectedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("205")).Bold(true)
-	helpStyle     = lipgloss.NewStyle().Foreground(lipgloss.Color("241"))
-	headerStyle   = lipgloss.NewStyle().Bold(true).MarginBottom(1)
-	errorStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color("9")).Bold(true)
+	docStyle                = lipgloss.NewStyle().Margin(1, 2)
+	selectedStyle           = lipgloss.NewStyle().Foreground(lipgloss.Color("205")).Bold(true)
+	helpStyle               = lipgloss.NewStyle().Foreground(lipgloss.Color("241"))
+	headerStyle             = lipgloss.NewStyle().Bold(true).MarginBottom(1)
+	errorStyle              = lipgloss.NewStyle().Foreground(lipgloss.Color("9")).Bold(true)
+	dimCheckedStyle         = lipgloss.NewStyle().Foreground(lipgloss.Color("240")).MarginRight(1)
+	highlightedCheckedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("10")).MarginRight(1)
 )
+
+type itemCheckable struct {
+	text    string
+	checked bool
+}
 
 type Model struct {
 	screen screen
 
 	// Screen 1: Column selection
-	columnChoices  []string
+	columnChoices  []itemCheckable
 	columnCursor   int
 	selectedColumn string
 
@@ -62,8 +69,8 @@ func NewModel(headers []string) *Model {
 	ti.TextStyle = selectedStyle
 
 	return &Model{
-		screen:        screencolumn,
-		columnChoices: headers,
+		screen:        screenColumn,
+		columnChoices: asItems(headers),
 		columnCursor:  0,
 		formatChoices: []string{"LaTeX", "Typst"},
 		formatCursor:  0,
@@ -89,8 +96,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case "enter":
 			switch m.screen {
-			case screencolumn:
-				m.selectedColumn = m.columnChoices[m.columnCursor]
+			case screenColumn:
+				m.selectedColumn = m.columnChoices[m.columnCursor].text
 				m.screen = screenFormat
 				m.columnCursor = 0 // Reset cursor for next list if needed
 			case screenFormat:
@@ -118,18 +125,22 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, tea.Quit
 			}
 		case "up", "k":
-			if m.screen == screencolumn && m.columnCursor > 0 {
+			if m.screen == screenColumn && m.columnCursor > 0 {
 				m.columnCursor--
 			}
 			if m.screen == screenFormat && m.formatCursor > 0 {
 				m.formatCursor--
 			}
 		case "down", "j":
-			if m.screen == screencolumn && m.columnCursor < len(m.columnChoices)-1 {
+			if m.screen == screenColumn && m.columnCursor < len(m.columnChoices)-1 {
 				m.columnCursor++
 			}
 			if m.screen == screenFormat && m.formatCursor < len(m.formatChoices)-1 {
 				m.formatCursor++
+			}
+		case " ":
+			if m.screen == screenColumn {
+				m.columnChoices[m.columnCursor].checked = !m.columnChoices[m.columnCursor].checked
 			}
 		}
 	case quitMsg: // Handle our custom quit message
@@ -151,19 +162,25 @@ func (m Model) View() string {
 	}
 
 	s := ""
-	help := helpStyle.Render("\nUse ↑/↓ or j/k to navigate, Enter to select, Ctrl+C or Esc to quit.")
+	help := helpStyle.Render("\nUse ↑/↓ or j/k to navigate, Space to select, Enter to continue, Ctrl+C or Esc to quit.")
 
 	switch m.screen {
-	case screencolumn:
+	case screenColumn:
 		s += headerStyle.Render("1. Choose the Columns to include:") + "\n"
 		for i, choice := range m.columnChoices {
 			cursor := "  " // Not selected
+			checked := "•" // Not checked
 			itemStyle := lipgloss.NewStyle()
+			checkedStyle := dimCheckedStyle
 			if m.columnCursor == i {
 				cursor = selectedStyle.Render("❯ ")
-				itemStyle = selectedStyle
 			}
-			s += fmt.Sprintf("%s%s\n", cursor, itemStyle.Render(choice))
+			if m.columnChoices[i].checked {
+				itemStyle = selectedStyle
+				checked = "✓"
+				checkedStyle = highlightedCheckedStyle
+			}
+			s += fmt.Sprintf("%s%s%s\n", cursor, checkedStyle.Render(checked), itemStyle.Render(choice.text))
 		}
 		s += help
 
@@ -198,4 +215,15 @@ func (m Model) View() string {
 	}
 
 	return docStyle.Render(s)
+}
+
+func asItems(s []string) []itemCheckable {
+	items := make([]itemCheckable, len(s))
+	for i, text := range s {
+		items[i] = itemCheckable{
+			text:    text,
+			checked: false,
+		}
+	}
+	return items
 }
