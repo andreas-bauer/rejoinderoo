@@ -6,8 +6,8 @@ import (
 	"os"
 
 	"github.com/andreas-bauer/rejoinderoo/internal/reader"
-	"github.com/andreas-bauer/rejoinderoo/internal/templates"
-	"github.com/andreas-bauer/rejoinderoo/internal/templates/typst"
+	// "github.com/andreas-bauer/rejoinderoo/internal/templates"
+	// "github.com/andreas-bauer/rejoinderoo/internal/templates/typst"
 	"github.com/andreas-bauer/rejoinderoo/internal/tui"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -31,10 +31,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	initialModel, err := tui.NewModel(td.Headers)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error creating model:", err)
-	}
+	initialModel := tui.NewModel(td.Headers)
 	p := tea.NewProgram(initialModel)
 
 	// Run returns the model as a tea.Model.
@@ -49,28 +46,28 @@ func main() {
 	if !ok {
 		fmt.Fprintln(os.Stderr, "Inconsistent model")
 	}
-	selected := m.(tui.Model).GetSelected()
+	// selected := m.(tui.Model).GetSelected()
 
-	if len(selected) < 3 {
-		fmt.Println("Unable to proceed. Requires at least three columns (ID, reviewer comment, author response) to proceed.")
-		os.Exit(1)
-	}
-
-	msg := fmt.Sprintf("You selected %d/%d columns:", len(selected), cap(selected))
-	fmt.Println(msg)
-	for _, col := range selected {
-		fmt.Printf("  - %s\n", col)
-	}
-	td.Keep(selected)
-
-	var tmpl templates.Template
-	tmpl = typst.NewTypstTemplate()
-	out, err := tmpl.Render(*td)
-	if err != nil {
-		fmt.Println("Error rendering template:", err)
-		os.Exit(1)
-	}
-	fmt.Println(out)
+	// if len(selected) < 3 {
+	// 	fmt.Println("Unable to proceed. Requires at least three columns (ID, reviewer comment, author response) to proceed.")
+	// 	os.Exit(1)
+	// }
+	//
+	// msg := fmt.Sprintf("You selected %d/%d columns:", len(selected), cap(selected))
+	// fmt.Println(msg)
+	// for _, col := range selected {
+	// 	fmt.Printf("  - %s\n", col)
+	// }
+	// td.Keep(selected)
+	//
+	// var tmpl templates.Template
+	// tmpl = typst.NewTypstTemplate()
+	// out, err := tmpl.Render(*td)
+	// if err != nil {
+	// 	fmt.Println("Error rendering template:", err)
+	// 	os.Exit(1)
+	// }
+	// fmt.Println(out)
 
 	fmt.Println("⭐️ If you enjoy this project, please consider giving it a star on GitHub")
 	fmt.Println("└─ https://github.com/andreas-bauer/rejoinderoo")

@@ -1,110 +1,201 @@
 package tui
 
 import (
+	"fmt"
 	"strings"
+	"time"
 
+	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
 
+// Define different screens
+type screen int
+
+const (
+	screencolumn screen = iota
+	screenFormat
+	screenFilename
+	screenSummary
+)
+
+// Styles
 var (
-	selectedItemStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#cba6f7"))                                 // Mocha mauve
-	helpStyle         = lipgloss.NewStyle().PaddingLeft(4).PaddingBottom(1).Foreground(lipgloss.Color("#7f849c")) // Mocha Overlay 1
+	docStyle      = lipgloss.NewStyle().Margin(1, 2)
+	selectedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("205")).Bold(true)
+	helpStyle     = lipgloss.NewStyle().Foreground(lipgloss.Color("241"))
+	headerStyle   = lipgloss.NewStyle().Bold(true).MarginBottom(1)
+	errorStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color("9")).Bold(true)
 )
 
 type Model struct {
-	cursor  int
-	Choices []item
+	screen screen
+
+	// Screen 1: Column selection
+	columnChoices  []string
+	columnCursor   int
+	selectedColumn string
+
+	// Screen 2: Format selection
+	formatChoices  []string
+	formatCursor   int
+	selectedFormat string
+
+	// Screen 3: Filename input
+	filenameInput   textinput.Model
+	enteredFilename string
+	inputError      string // For potential filename validation
+
+	// Screen 4: Summary
+	quitting bool // To ensure summary is shown before exit
 }
 
-type item struct {
-	text    string
-	checked bool
+func NewModel(headers []string) *Model {
+	ti := textinput.New()
+	ti.Placeholder = "my_document"
+	ti.Focus()
+	ti.CharLimit = 156
+	ti.Width = 30
+	ti.Prompt = "❯ "
+	ti.PromptStyle = selectedStyle
+	ti.TextStyle = selectedStyle
+
+	return &Model{
+		screen:        screencolumn,
+		columnChoices: headers,
+		columnCursor:  0,
+		formatChoices: []string{"LaTeX", "Typst"},
+		formatCursor:  0,
+		filenameInput: ti,
+	}
 }
 
 func (m Model) Init() tea.Cmd {
-	return nil
+	return textinput.Blink // Start the text input blinking
 }
 
-func NewModel(headers []string) (*Model, error) {
-	return &Model{
-		Choices: asItems(headers),
-	}, nil
-}
+// Custom message for delayed quit
+type quitMsg struct{}
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
+
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "q", "esc":
+			m.quitting = true
 			return m, tea.Quit
-
-		case " ":
-			// Toggle the checked state of the current item.
-			m.Choices[m.cursor].checked = !m.Choices[m.cursor].checked
-
 		case "enter":
-			// Send the choice on the channel and exit.
-			return m, tea.Quit
-
-		case "down", "j":
-			m.cursor++
-			if m.cursor >= len(m.Choices) {
-				m.cursor = 0
+			switch m.screen {
+			case screencolumn:
+				m.selectedColumn = m.columnChoices[m.columnCursor]
+				m.screen = screenFormat
+				m.columnCursor = 0 // Reset cursor for next list if needed
+			case screenFormat:
+				m.selectedFormat = m.formatChoices[m.formatCursor]
+				m.screen = screenFilename
+				m.formatCursor = 0
+				m.filenameInput.Focus() // Focus the text input
+				return m, textinput.Blink
+			case screenFilename:
+				filename := strings.TrimSpace(m.filenameInput.Value())
+				if filename == "" {
+					m.inputError = "Filename cannot be empty."
+				} else {
+					m.enteredFilename = filename
+					m.screen = screenSummary
+					m.inputError = ""
+					// Schedule a quit message after a short delay to show summary
+					return m, tea.Tick(1500*time.Millisecond, func(t time.Time) tea.Msg {
+						return quitMsg{}
+					})
+				}
+			case screenSummary:
+				// Already handled by tea.Tick, but an enter here could also quit
+				m.quitting = true
+				return m, tea.Quit
 			}
-
 		case "up", "k":
-			m.cursor--
-			if m.cursor < 0 {
-				m.cursor = len(m.Choices) - 1
+			if m.screen == screencolumn && m.columnCursor > 0 {
+				m.columnCursor--
+			}
+			if m.screen == screenFormat && m.formatCursor > 0 {
+				m.formatCursor--
+			}
+		case "down", "j":
+			if m.screen == screencolumn && m.columnCursor < len(m.columnChoices)-1 {
+				m.columnCursor++
+			}
+			if m.screen == screenFormat && m.formatCursor < len(m.formatChoices)-1 {
+				m.formatCursor++
 			}
 		}
+	case quitMsg: // Handle our custom quit message
+		m.quitting = true
+		return m, tea.Quit
 	}
 
-	return m, nil
+	// Handle text input updates for the filename screen
+	if m.screen == screenFilename {
+		m.filenameInput, cmd = m.filenameInput.Update(msg)
+	}
+
+	return m, cmd
 }
 
 func (m Model) View() string {
-	s := strings.Builder{}
-	s.WriteString("Which columns should be considered?\n")
-	s.WriteString("Select at least three fields (ID, reviewer comment, author response)\n\n")
-
-	for i, item := range m.Choices {
-		if m.cursor == i {
-			s.WriteString(">")
-
-		} else {
-			s.WriteString(" ")
-		}
-		if item.checked {
-			s.WriteString(selectedItemStyle.Render("(•) " + item.text))
-		} else {
-			s.WriteString("( ) " + item.text)
-		}
-		s.WriteString("\n")
+	if m.quitting && m.screen != screenSummary { // if quitting from other screens
+		return "Exiting...\n"
 	}
-	s.WriteString(helpStyle.Render("\n(press space to select item)\n(press q to quit)\n"))
 
-	return s.String()
-}
+	s := ""
+	help := helpStyle.Render("\nUse ↑/↓ or j/k to navigate, Enter to select, Ctrl+C or Esc to quit.")
 
-func asItems(headers []string) []item {
-	items := make([]item, len(headers))
-	for i, header := range headers {
-		items[i] = item{
-			text:    header,
-			checked: false,
+	switch m.screen {
+	case screencolumn:
+		s += headerStyle.Render("1. Choose the Columns to include:") + "\n"
+		for i, choice := range m.columnChoices {
+			cursor := "  " // Not selected
+			itemStyle := lipgloss.NewStyle()
+			if m.columnCursor == i {
+				cursor = selectedStyle.Render("❯ ")
+				itemStyle = selectedStyle
+			}
+			s += fmt.Sprintf("%s%s\n", cursor, itemStyle.Render(choice))
 		}
-	}
-	return items
-}
+		s += help
 
-func (m Model) GetSelected() []string {
-	selected := make([]string, 0, len(m.Choices))
-	for _, item := range m.Choices {
-		if item.checked {
-			selected = append(selected, item.text)
+	case screenFormat:
+		s += headerStyle.Render("2. Choose an Output Format:") + "\n"
+		for i, choice := range m.formatChoices {
+			cursor := "  "
+			itemStyle := lipgloss.NewStyle()
+			if m.formatCursor == i {
+				cursor = selectedStyle.Render("❯ ")
+				itemStyle = selectedStyle
+			}
+			s += fmt.Sprintf("%s%s\n", cursor, itemStyle.Render(choice))
 		}
+		s += help
+
+	case screenFilename:
+		s += headerStyle.Render("3. Enter Output Filename:") + "\n"
+		s += m.filenameInput.View() + "\n"
+		if m.inputError != "" {
+			s += errorStyle.Render(m.inputError) + "\n"
+		}
+		s += helpStyle.Render("\nType filename and press Enter. No extension needed (e.g., 'report').")
+
+	case screenSummary:
+		s += headerStyle.Render("4. Summary:") + "\n"
+		s += fmt.Sprintf("   Selected column: %s\n", selectedStyle.Render(m.selectedColumn))
+		s += fmt.Sprintf("   Selected Format:   %s\n", selectedStyle.Render(m.selectedFormat))
+		s += fmt.Sprintf("   Output Filename:   %s\n", selectedStyle.Render(m.enteredFilename))
+		s += "\n" + selectedStyle.Render("File was generated!") + "\n\n"
+		s += helpStyle.Render("Exiting automatically...")
 	}
-	return selected
+
+	return docStyle.Render(s)
 }
