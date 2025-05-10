@@ -221,7 +221,8 @@ func (m Model) View() string {
 		s += fmt.Sprintf("   Selected Format:  %s\n", selectedStyle.Render(m.selectedFormat))
 		s += fmt.Sprintf("   Output Filename:  %s\n", selectedStyle.Render(m.enteredFilename))
 		s += "\n" + selectedStyle.Render("File was generated!") + "\n\n"
-		s += helpStyle.Render("Exiting automatically...")
+		s += "⭐️ If you enjoy this project, please consider giving it a star on GitHub\n"
+		s += "└─ https://github.com/andreas-bauer/rejoinderoo\n"
 	}
 
 	return docStyle.Render(s)
