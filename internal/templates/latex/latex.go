@@ -71,7 +71,7 @@ func createDoc(td *reader.TabularData) document {
 
 	return document{
 		ReviewerIDs: allRevIDs,
-		LenHeaders:  len(td.Headers),
+		LenHeaders:  len(td.Headers) + 1, // because of Latex counting
 		Headers:     headers,
 		Responses:   responses,
 	}
@@ -113,7 +113,7 @@ func asDocHeaders(headers []string) []header {
 	for idx, h := range headers {
 		header := &header{
 			Name: h,
-			Idx:  idx + 1,
+			Idx:  idx + 2, // Start from 2 to account for RevID and Latex counting
 		}
 		res[idx] = *header
 	}

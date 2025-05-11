@@ -122,3 +122,57 @@ func TestAsDocresponses(t *testing.T) {
 		})
 	}
 }
+
+func TestAsDocHeaders(t *testing.T) {
+	tests := []struct {
+		name     string
+		headers  []string
+		expected []header
+	}{
+		{
+			name:    "Single header",
+			headers: []string{"ID"},
+			expected: []header{
+				{Name: "ID", Idx: 2},
+			},
+		},
+		{
+			name:    "Multiple headers",
+			headers: []string{"ID", "Comment", "Response"},
+			expected: []header{
+				{Name: "ID", Idx: 2},
+				{Name: "Comment", Idx: 3},
+				{Name: "Response", Idx: 4},
+			},
+		},
+		{
+			name:     "No headers",
+			headers:  []string{},
+			expected: []header{},
+		},
+		{
+			name:    "Headers with special characters",
+			headers: []string{"ID#", "Comment%", "Response&"},
+			expected: []header{
+				{Name: "ID#", Idx: 2},
+				{Name: "Comment%", Idx: 3},
+				{Name: "Response&", Idx: 4},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := asDocHeaders(tt.headers)
+			if len(result) != len(tt.expected) {
+				t.Errorf("asDocHeaders() length = %d; want %d", len(result), len(tt.expected))
+			}
+			for i, res := range result {
+				if res.Name != tt.expected[i].Name || res.Idx != tt.expected[i].Idx {
+					t.Errorf("asDocHeaders()[%d] = %+v; want %+v", i, res, tt.expected[i])
+				}
+			}
+		})
+	}
+}
+
