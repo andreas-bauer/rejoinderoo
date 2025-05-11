@@ -9,19 +9,33 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-type FormResult struct {
-	Filename        string
-	SelectedColumns []string
-	Template        templates.TemplateType
+type FormData struct {
+	Filename         string
+	AvailableHeaders []string
+	SelectedHeaders  []string
+	Template         templates.TemplateType
 }
 
-func RunForm(allHeaders []string) (FormResult, error) {
-	var headerOpts = make([]huh.Option[string], len(allHeaders))
-	for i, header := range allHeaders {
+func RunFilePicker() string {
+	var file string
+	huh.NewForm(
+		huh.NewGroup(
+			huh.NewFilePicker().
+				Picking(true).
+				Title("Input file").
+				Description("Select a .csv, .xlsx, or .xls file").
+				AllowedTypes([]string{".csv", ".xlsx", ".xls"}).
+				Value(&file),
+		),
+	).WithShowHelp(true).Run()
+	return file
+}
+
+func RunForm(fd *FormData) error {
+	var headerOpts = make([]huh.Option[string], len(fd.AvailableHeaders))
+	for i, header := range fd.AvailableHeaders {
 		headerOpts[i] = huh.NewOption(header, header)
 	}
-
-	var result FormResult
 
 	form := huh.NewForm(
 		huh.NewGroup(
@@ -35,7 +49,7 @@ func RunForm(allHeaders []string) (FormResult, error) {
 					return nil
 
 				}).
-				Value(&result.SelectedColumns),
+				Value(&fd.SelectedHeaders),
 		),
 		huh.NewGroup(
 			huh.NewSelect[templates.TemplateType]().Title("Template").
@@ -44,27 +58,26 @@ func RunForm(allHeaders []string) (FormResult, error) {
 					huh.NewOption("LaTeX", templates.LatexTemplate).Selected(true),
 					huh.NewOption("Typst", templates.TypstTemplate),
 				).
-				Value(&result.Template),
+				Value(&fd.Template),
 		),
 		huh.NewGroup(
 			huh.NewInput().Title("Filename").
 				Description("The file name of the generated rejoinder").
 				Prompt("> ").
 				Placeholder("output.tex").
-				Value(&result.Filename),
+				Value(&fd.Filename),
 		),
 	)
 
 	err := form.Run()
 	if err != nil {
-		return result, err
+		return err
 	}
 
-	return result, nil
-
+	return nil
 }
 
-func PrintSummary(result FormResult) {
+func PrintSummary(fd *FormData) {
 	var sb strings.Builder
 	keyword := func(s string) string {
 		return lipgloss.NewStyle().Foreground(lipgloss.Color("212")).Render(s)
@@ -72,8 +85,8 @@ func PrintSummary(result FormResult) {
 	fmt.Fprintf(&sb,
 		"%s\n\nTempate: %s\nFilename: %s\n\n%s\n%s",
 		lipgloss.NewStyle().Bold(true).Render("✅ Rejoinder created"),
-		keyword(string(result.Template)),
-		keyword(result.Filename),
+		keyword(string(fd.Template)),
+		keyword(fd.Filename),
 		"⭐️ If you enjoy this project, please consider giving it a star on GitHub:",
 		keyword("   https://github.com/andreas-bauer/rejoinderoo"),
 	)
