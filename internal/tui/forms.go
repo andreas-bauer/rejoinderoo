@@ -32,16 +32,11 @@ func RunFilePicker() string {
 }
 
 func RunForm(fd *FormData) error {
-	var headerOpts = make([]huh.Option[string], len(fd.AvailableHeaders))
-	for i, header := range fd.AvailableHeaders {
-		headerOpts[i] = huh.NewOption(header, header)
-	}
-
 	form := huh.NewForm(
 		huh.NewGroup(
 			huh.NewMultiSelect[string]().Title("Select Columns").
 				Description("Select the columns you want to include in the rejoinder").
-				Options(headerOpts...).
+				Options(huh.NewOptions(fd.AvailableHeaders...)...).
 				Validate(func(t []string) error {
 					if len(t) < 3 {
 						return fmt.Errorf("at least three columns need to be selected")
