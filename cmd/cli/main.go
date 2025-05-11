@@ -7,7 +7,6 @@ import (
 
 	"github.com/andreas-bauer/rejoinderoo/internal/reader"
 	"github.com/andreas-bauer/rejoinderoo/internal/tui"
-	tea "github.com/charmbracelet/bubbletea"
 )
 
 func main() {
@@ -26,19 +25,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	initialModel := tui.NewModel(td.Headers)
-	p := tea.NewProgram(initialModel)
-
-	// Run returns the model as a tea.Model.
-	m, err := p.Run()
+	formResult, err := tui.RunForm(td.Headers)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error running TUI:", err)
+		fmt.Fprintln(os.Stderr, "Error running TUI form:", err)
 		os.Exit(1)
 	}
 
-	// Assert the final tea.Model to our local model and print the choice.
-	m, ok := m.(tui.Model)
-	if !ok {
-		fmt.Fprintln(os.Stderr, "Inconsistent model")
-	}
+	tui.PrintSummary(formResult)
 }
