@@ -10,14 +10,15 @@ import (
 )
 
 func main() {
-	inFile := flag.String("i", "./tests/small.csv", "file path to input file (CSV or Excel)")
-	outFile := flag.String("o", "out.tex", "file path to output LaTeX file")
+	inFileFlag := flag.String("i", "", "file path to input file (CSV or Excel)")
 	flag.Parse()
 
-	fmt.Printf("input: %s\n", *inFile)
-	fmt.Printf("output: %s\n", *outFile)
+	inFile := *inFileFlag
+	if *inFileFlag == "" {
+		inFile = tui.RunFilePicker()
+	}
 
-	td, err := reader.NewReader(*inFile)
+	td, err := reader.NewReader(inFile)
 	if err != nil {
 		fmt.Println("Error reading file:", err)
 		fmt.Println("Unable to proceed.")
@@ -25,11 +26,14 @@ func main() {
 		os.Exit(1)
 	}
 
-	formResult, err := tui.RunForm(td.Headers)
+	fd := &tui.FormData{
+		AvailableHeaders: td.Headers,
+	}
+	err = tui.RunForm(fd)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Error running TUI form:", err)
 		os.Exit(1)
 	}
 
-	tui.PrintSummary(formResult)
+	tui.PrintSummary(fd)
 }
