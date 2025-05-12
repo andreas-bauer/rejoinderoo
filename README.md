@@ -2,58 +2,33 @@
 
 <p align="center"><img src="images/logo.png"></p>
 
-Rejoinderoo creates a rejoinder (response to reviewers) LaTeX document based on a CSV file.
+Rejoinderoo creates a rejoinder (response to reviewers) based on a CSV or Excel file.
+The generated document is a LaTeX or Typst file that can be compiled to PDF.
 An example of a generated rejoinder document is shown in [example.pdf](./example.pdf).
 
 <p align="center"><img src="images/screenshot.png"></p>
 
-## Prerequisites
+## Development
 
-First, ensure that you have a [working Python 3 environment installed](https://docs.python.org/3/using/index.html).
-
-Rejoinderoo depends on [Pick](https://pypi.org/project/pick/) to provide the selection interface for
-data fields of the CSV file.
-Install the dependencies using the `requirements.txt` file.
+This project uses a Makefile to manage all build and test tasks.
 
 ```sh
-pip3 install -r requirements.txt
+# for help and overview of all tasks
+make help
+
+# to install all dependencies
+make deps
+
+# to build the program in the `bin` directory
+make build
+
+# to run the compiled program
+./bin/rejoinderoo
 ```
 
 ## Usage
 
-Step 1) Prepare the response to reviewers in a spreadsheet and export it as a CSV file,
-like the [input.csv](./input.csv).
-
-At least three columns are required to be able to parse the CSV file.
-Have a look at as an example of
-
-Step 2) Run `main.py` with two arguments: the input CSV file and the output file name.
-
-```sh
-# show help
-python3 main.py -h
-
-# usage
-python3 main.py input.csv output.tex
-```
-
-Step 3)
-
-Select all fields (columns) from the CSV file
-that shall be included in the generated document.
-
-```sh
- $ python3 main.py
- Select at least three fields (ID, reviewer comment, author response)
-
-   (x) ID
-   (x) Comment
- * (x) Response
-   ( ) Action
-   ( ) Where
-   ( ) Status
-   ( ) Responsible
-```
+TODO: Add GIF
 
 ### Color coding of responses
 
