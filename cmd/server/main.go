@@ -2,10 +2,16 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
+
+	project "github.com/andreas-bauer/rejoinderoo"
+	"github.com/andreas-bauer/rejoinderoo/internal/server"
 )
+
+var html *template.Template
 
 func main() {
 	port := os.Getenv("PORT")
@@ -13,8 +19,16 @@ func main() {
 		port = "8080"
 	}
 
-	fs := http.FileServer(http.Dir("./web/static"))
-	http.Handle("/", fs)
+	var err error
+	html, err = template.ParseFS(project.TemplateFS, "web/templates/*.html")
+	if err != nil {
+		log.Fatalf("Error parsing web templates: %v", err)
+	}
+
+	handlers := server.NewHandler(html)
+
+	http.Handle("/css/output.css", http.FileServer(http.FS(project.CSS)))
+	http.HandleFunc("/", handlers.Index)
 
 	fmt.Printf("Server running at http://localhost:%s\n", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
