@@ -53,7 +53,7 @@ colorlinks = false,
     \tcblower
     {{- range .Headers}}
     {{- if gt .Idx 3}}
-    {{ if gt .Idx 4}}\\ {{ end}}\textbf{ {{ .Name }}:} #{{- .Idx }}
+    {{ if gt .Idx 4}}\\ {{ end}}\textbf{ {{- .Name }}:} #{{- .Idx }}
     {{- end }}
     {{- end }}
     \end{tcolorbox}
