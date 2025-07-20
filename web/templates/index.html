@@ -5,20 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rejoinderoo</title>
     <link rel="stylesheet" href="/css/output.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+    />
     <script
-      src="https://unpkg.com/htmx.org@2.0.4/dist/htmx.js"
-      integrity="sha384-oeUn82QNXPuVkGCkcrInrS1twIxKhkZiFfr2TdiuObZ3n3yIeMiqcRzkIcguaof1"
+      src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js"
+      integrity="sha384-Akqfrbj/HpNVo8k11SXBb6TlBWmXXlYQrCSqEWmyKJe+hDm3Z/B2WVG4smwBkRVm"
       crossorigin="anonymous"
     ></script>
   </head>
   <body>
-    <header>
-      <h1>Rejoinderoo</h1>
+    <header align="center">
+      <h1 align->Rejoinderoo</h1>
     </header>
 
-    <main>Welcome to Rejoinderoo!</main>
+    <main class="container">
+      <article>
+        <nav>
+          <ul>
+            <li><strong>Rejoinderoo</strong></li>
+          </ul>
+          <ul>
+            <li>
+              <a href="https://github.com/andreas-bauer/rejoinderoo">GitHub</a>
+            </li>
+          </ul>
+        </nav>
 
-    <footer>
+        <form id="form" hx-encoding="multipart/form-data">
+          <fieldset>
+            <label>
+              Upload Spreadsheet
+              <input
+                type="file"
+                name="file"
+                aria-label="File upload"
+                aria-des
+                aria-describedby="file-helper"
+                hx-post="/upload"
+                hx-target="#col-select"
+                hx-swap="innerHTML"
+                hx-trigger="change"
+                cribedby="file-helper"
+                hx-disabled-elt="this,#col-select"
+                hx-indicator="#spinner"
+              />
+              <small id="file-helper">Supported files are CSV and Excel</small>
+            </label>
+            <span id="spinner" aria-busy="true" class="htmx-indicator"
+              >Loading file...</span
+            >
+          </fieldset>
+          <div id="col-select">
+            <input type="button" disabled value="Generate" />
+          </div>
+        </form>
+      </article>
+    </main>
+
+    <footer align="center">
       <p>Created with Go + HTMX by Andi</p>
     </footer>
   </body>

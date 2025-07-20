@@ -1,0 +1,22 @@
+{{define "select-column-form"}}
+<fieldset>
+  <legend>Available columns, select at least three:</legend>
+  {{ range .Headers}}
+  <label>
+    <input type="checkbox" name="header-{{- .}}" />
+    {{.}}
+  </label>
+  {{ end}}
+</fieldset>
+
+<fieldset>
+  <legend>Select rejoinder template</legend>
+  <select name="gen-template" aria-label="Select generation template">
+    {{ range .Templates }}
+    <option value="{{ . }}">{{ . }}</option>
+    {{ end }}
+  </select>
+</fieldset>
+
+<input type="button" value="Generate" hx-post="/generate" hx-swap="none" />
+{{end}}

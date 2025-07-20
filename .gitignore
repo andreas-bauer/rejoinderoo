@@ -7,4 +7,5 @@ out.pdf
 
 # Build artifacts
 bin/
+tmp/
 coverage.out
