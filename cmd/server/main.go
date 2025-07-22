@@ -31,7 +31,6 @@ func main() {
 
 	handlers := server.NewHandler(html)
 
-	http.Handle("/css/output.css", http.FileServer(http.FS(project.CSS)))
 	http.HandleFunc("/", handlers.Index)
 	http.HandleFunc("/upload", handlers.Upload)
 	http.HandleFunc("/generate", handlers.Generate)
