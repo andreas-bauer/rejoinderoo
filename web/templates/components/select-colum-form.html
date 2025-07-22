@@ -1,12 +1,19 @@
 {{define "select-column-form"}}
 <fieldset>
   <legend>Available columns, select at least three:</legend>
-  {{ range .Headers}}
+  {{ range $i, $h := .Headers }}
   <label>
-    <input type="checkbox" name="header-{{- .}}" />
-    {{.}}
+    <input
+      type="checkbox"
+      name="header-{{- $h}}"
+      {{if
+      lt
+      $i
+      3}}checked{{end}}
+    />
+    {{$h}}
   </label>
-  {{ end}}
+  {{ end }}
 </fieldset>
 
 <fieldset>
