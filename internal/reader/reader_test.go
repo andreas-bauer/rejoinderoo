@@ -31,6 +31,24 @@ func TestTabularData_Keep(t *testing.T) {
 			},
 		},
 		{
+			name: "keep all headers and respect order",
+			initialData: &TabularData{
+				Headers: []string{"ID", "Comment", "Response"},
+				Records: [][]string{
+					{"R1.1", "Comment A", "Response A"},
+					{"R1.2", "Comment B", "Response B"},
+				},
+			},
+			headersToKeep: []string{"Response", "Comment", "ID"},
+			expectedData: &TabularData{
+				Headers: []string{"Response", "Comment", "ID"},
+				Records: [][]string{
+					{"Response A", "Comment A", "R1.1"},
+					{"Response B", "Comment B", "R1.2"},
+				},
+			},
+		},
+		{
 			name: "keep subset of headers",
 			initialData: &TabularData{
 				Headers: []string{"ID", "Comment", "Response", "Action"},
