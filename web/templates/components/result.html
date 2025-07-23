@@ -1,0 +1,46 @@
+{{define "result"}}
+<div>
+  <div class="grid">
+    <input
+      id="btn-copy"
+      type="button"
+      class="secondary"
+      value="Copy to Clipboard"
+    />
+    <input id="btn-download" type="button" class="secondary" value="Download" />
+  </div>
+  <pre><code id=generated-result>{{.Content}}</code></pre>
+</div>
+
+<script>
+  // Copy to Clipboard
+  document.getElementById("btn-copy").addEventListener("click", function () {
+    const codeText = document.getElementById("generated-result").textContent;
+
+    navigator.clipboard
+      .writeText(codeText)
+      .then(() => alert("Copied to clipboard!"))
+      .catch(() => alert("Failed to copy!"));
+  });
+
+  // Download as a text file
+  document
+    .getElementById("btn-download")
+    .addEventListener("click", function () {
+      const codeText = document.getElementById("generated-result").textContent;
+
+      const blob = new Blob([codeText], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+
+      const downloadLink = document.createElement("a");
+      downloadLink.href = url;
+      downloadLink.download = "{{- .Filename}}.{{- .Extension}}";
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+
+      // Cleanup
+      document.body.removeChild(downloadLink);
+      URL.revokeObjectURL(url);
+    });
+</script>
+{{end}}

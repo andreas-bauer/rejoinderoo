@@ -13,6 +13,17 @@
       integrity="sha384-Akqfrbj/HpNVo8k11SXBb6TlBWmXXlYQrCSqEWmyKJe+hDm3Z/B2WVG4smwBkRVm"
       crossorigin="anonymous"
     ></script>
+    <style>
+      .alert-error {
+        border-left: 4px solid var(--del-color, #e53935);
+        background-color: rgba(229, 57, 53, 0.1);
+        color: var(--del-color, #e53935);
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        margin: 1rem 0;
+        font-weight: 500;
+      }
+    </style>
   </head>
   <body>
     <header align="center">
@@ -56,9 +67,16 @@
               >Loading file...</span
             >
           </fieldset>
-          <div id="col-select">
-            <input type="button" disabled value="Generate" />
-          </div>
+          <div id="col-select"></div>
+
+          <input
+            type="button"
+            value="Generate"
+            hx-post="/generate"
+            hx-target="#result-or-error"
+            hx-swap="innerHTML"
+          />
+          <div id="result-or-error"></div>
         </form>
       </article>
     </main>

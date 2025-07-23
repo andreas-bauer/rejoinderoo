@@ -1,10 +1,12 @@
 package server
 
 import (
+	"errors"
 	"fmt"
 	"html/template"
-	"io"
+	"mime/multipart"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/andreas-bauer/rejoinderoo/internal/reader"
@@ -38,28 +40,18 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) Upload(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(size10MB)
 
-	file, handler, err := r.FormFile("file")
-	if err == http.ErrMissingFile {
-		http.Error(w, "No file submitted", http.StatusInternalServerError)
-		return
-	}
+	file, _, err := h.assertFormFile(r)
 	if err != nil {
-		http.Error(w, "Error retrieving the file", http.StatusInternalServerError)
+		h.tmpl.ExecuteTemplate(w, "error", err.Error())
 		return
 	}
 	defer file.Close()
-
-	if !isAllowedContentType(handler.Header.Get("Content-Type")) {
-		http.Error(w, "File type is not supported", http.StatusInternalServerError)
-		return
-	}
 
 	csv := reader.CSVReader{}
 	tb, err := csv.Read(file)
 	if err != nil {
 		fmt.Println("Error reading CSV")
 	}
-	fmt.Println(tb.Headers)
 
 	tmplArgs := struct {
 		Headers   []string
@@ -78,33 +70,18 @@ func (h *Handler) Upload(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) Generate(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(size10MB)
 
-	file, handler, err := r.FormFile("file")
-	if err == http.ErrMissingFile {
-		http.Error(w, "No file submitted", http.StatusInternalServerError)
-		return
-	}
+	file, filename, err := h.assertFormFile(r)
 	if err != nil {
-		http.Error(w, "Error retrieving the file", http.StatusInternalServerError)
+		h.tmpl.ExecuteTemplate(w, "error", err.Error())
 		return
 	}
+	defer file.Close()
 
-	if !isAllowedContentType(handler.Header.Get("Content-Type")) {
-		http.Error(w, "File type is not supported", http.StatusInternalServerError)
+	selectedHeaders := getFormValuesWithPrefix(r.Form, "header-")
+
+	if len(selectedHeaders) < 3 {
+		h.tmpl.ExecuteTemplate(w, "error", "select at least 3 columns")
 		return
-	}
-
-	fmt.Println("Generate file:")
-	fmt.Println(handler.Filename)
-
-	selectedHeaders := []string{}
-	for key, values := range r.Form {
-		if strings.HasPrefix(key, "header-") {
-			name := strings.TrimPrefix(key, "header-")
-			selectedHeaders = append(selectedHeaders, name)
-		}
-		for _, value := range values {
-			fmt.Printf("Form key: %s, value: %s\n", key, value)
-		}
 	}
 
 	csv := reader.CSVReader{}
@@ -119,6 +96,7 @@ func (h *Handler) Generate(w http.ResponseWriter, r *http.Request) {
 	if genTemplate == "" {
 		genTemplate = "latex"
 	}
+	genTemplateExt := "tex"
 
 	var tmpl templates.Template = latex.NewLatexTemplate()
 	out, err := tmpl.Render(*td)
@@ -126,13 +104,59 @@ func (h *Handler) Generate(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Error rendering template:", err)
 	}
 
-	// Set headers to prompt file download
-	w.Header().Set("Content-Disposition", "attachment; filename=\"output.txt\"")
-	w.Header().Set("Content-Type", "text/plain")
-	w.Header().Set("Content-Length", fmt.Sprintf("%d", len(out)))
-	io.Copy(w, strings.NewReader(out))
+	filenameWithoutExt := fileNameWithoutExtension(filename)
+
+	doc := struct {
+		Content   string
+		Filename  string
+		Extension string
+	}{
+		Content:   out,
+		Filename:  filenameWithoutExt,
+		Extension: genTemplateExt,
+	}
+
+	if err := h.tmpl.ExecuteTemplate(w, "result", doc); err != nil {
+		http.Error(w, "Error rendering template: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+}
+
+func (h *Handler) assertFormFile(r *http.Request) (multipart.File, string, error) {
+	file, handler, err := r.FormFile("file")
+	if err == http.ErrMissingFile {
+		return nil, handler.Filename, errors.New("no file submitted")
+	}
+	if err != nil {
+		return nil, handler.Filename, errors.New("error retrieving the file")
+	}
+	defer file.Close()
+
+	if !isAllowedContentType(handler.Header.Get("Content-Type")) {
+		return nil, handler.Filename, errors.New("file type is not supported")
+	}
+
+	return file, handler.Filename, nil
+}
+
+func getFormValuesWithPrefix(formValues url.Values, prefix string) []string {
+	var values []string
+	for key, vals := range formValues {
+		if strings.HasPrefix(key, prefix) {
+			values = append(values, vals...)
+		}
+	}
+	return values
 }
 
 func isAllowedContentType(ct string) bool {
 	return ct == "text/csv" || ct == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+}
+
+func fileNameWithoutExtension(fileName string) string {
+	if pos := strings.LastIndexByte(fileName, '.'); pos != -1 {
+		return fileName[:pos]
+	}
+	return fileName
 }
