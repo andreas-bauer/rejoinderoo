@@ -36,6 +36,12 @@ func NewTypstTemplate() *Typst {
 	return &Typst{}
 }
 
+// FileExtension returns the file extension for Typst templates.
+func (t *Typst) FileExtension() string {
+	return ".typ"
+}
+
+// Render processes the Typst template with the provided tabular data.
 func (t *Typst) Render(td reader.TabularData) (string, error) {
 
 	escapeAllStrings(&td)

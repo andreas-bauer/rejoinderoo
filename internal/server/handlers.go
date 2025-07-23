@@ -12,6 +12,7 @@ import (
 	"github.com/andreas-bauer/rejoinderoo/internal/reader"
 	"github.com/andreas-bauer/rejoinderoo/internal/templates"
 	"github.com/andreas-bauer/rejoinderoo/internal/templates/latex"
+	"github.com/andreas-bauer/rejoinderoo/internal/templates/typst"
 )
 
 var size10MB int64 = 10 << 20
@@ -92,14 +93,15 @@ func (h *Handler) Generate(w http.ResponseWriter, r *http.Request) {
 
 	td.Keep(selectedHeaders)
 
-	genTemplate := r.FormValue("gen-template")
-	if genTemplate == "" {
-		genTemplate = "latex"
+	var genTmpl templates.Template
+	switch r.FormValue("gen-template") {
+	case "typst":
+		genTmpl = typst.NewTypstTemplate()
+	default:
+		genTmpl = latex.NewLatexTemplate()
 	}
-	genTemplateExt := "tex"
 
-	var tmpl templates.Template = latex.NewLatexTemplate()
-	out, err := tmpl.Render(*td)
+	out, err := genTmpl.Render(*td)
 	if err != nil {
 		fmt.Println("Error rendering template:", err)
 	}
@@ -113,7 +115,7 @@ func (h *Handler) Generate(w http.ResponseWriter, r *http.Request) {
 	}{
 		Content:   out,
 		Filename:  filenameWithoutExt,
-		Extension: genTemplateExt,
+		Extension: genTmpl.FileExtension(),
 	}
 
 	if err := h.tmpl.ExecuteTemplate(w, "result", doc); err != nil {

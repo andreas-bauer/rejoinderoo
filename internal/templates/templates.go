@@ -7,6 +7,7 @@ import (
 // Template is an interface for templates.
 type Template interface {
 	Render(td reader.TabularData) (string, error)
+	FileExtension() string
 }
 
 // TemplateType defines the types of templates available.
