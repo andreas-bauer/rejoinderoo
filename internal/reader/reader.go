@@ -48,22 +48,21 @@ func NewReader(filename string) (*TabularData, error) {
 
 // Keep filters the headers and records by removing all headers and the corresponding records
 // that are not in the given list of headers to keep.
+// It changes the order of the headers and records to match the order of headers to keep.
 func (td *TabularData) Keep(headers []string) {
-	keepMap := make(map[string]bool)
+	// Map header to its index in the original headers
+	headerIndex := make(map[string]int)
+	for i, h := range td.Headers {
+		headerIndex[h] = i
+	}
+
+	newHeaders := make([]string, 0, len(headers))
+	indicesToKeep := make([]int, 0, len(headers))
 	for _, h := range headers {
-		keepMap[h] = true
-	}
-
-	var indicesToKeep []int
-	for i, header := range td.Headers {
-		if keepMap[header] {
-			indicesToKeep = append(indicesToKeep, i)
+		if idx, ok := headerIndex[h]; ok {
+			newHeaders = append(newHeaders, h)
+			indicesToKeep = append(indicesToKeep, idx)
 		}
-	}
-
-	newHeaders := make([]string, 0, len(indicesToKeep))
-	for _, idx := range indicesToKeep {
-		newHeaders = append(newHeaders, td.Headers[idx])
 	}
 
 	newRecords := make([][]string, len(td.Records))
@@ -72,6 +71,8 @@ func (td *TabularData) Keep(headers []string) {
 		for _, idx := range indicesToKeep {
 			if idx < len(record) {
 				newRecord = append(newRecord, record[idx])
+			} else {
+				newRecord = append(newRecord, "")
 			}
 		}
 		newRecords[i] = newRecord
