@@ -37,7 +37,7 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	h.tmpl.ExecuteTemplate(w, "index.html", nil)
 }
 
-func (h *Handler) Upload(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) ColSelectForm(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(size10MB)
 
 	file, _, err := h.assertFormFile(r)

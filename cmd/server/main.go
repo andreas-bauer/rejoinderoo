@@ -32,7 +32,7 @@ func main() {
 	handlers := server.NewHandler(html)
 
 	http.HandleFunc("/", handlers.Index)
-	http.HandleFunc("/upload", handlers.Upload)
+	http.HandleFunc("/colform", handlers.ColSelectForm)
 	http.HandleFunc("/generate", handlers.Generate)
 
 	fmt.Printf("Server running at http://localhost:%s\n", port)
