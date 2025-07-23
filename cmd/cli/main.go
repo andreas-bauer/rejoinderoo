@@ -45,14 +45,14 @@ func main() {
 	switch fd.Template {
 	case templates.TypstTemplate:
 		tmpl = typst.NewTypstTemplate()
-		fd.Filename = appendExtensionIfNotPresent(fd.Filename, ".typ")
 	case templates.LatexTemplate:
 		tmpl = latex.NewLatexTemplate()
-		fd.Filename = appendExtensionIfNotPresent(fd.Filename, ".tex")
 	default:
 		fmt.Fprintln(os.Stderr, "Error: Unknown template type:", fd.Template)
 		os.Exit(1)
 	}
+
+	fd.Filename = appendExtensionIfNotPresent(fd.Filename, tmpl.FileExtension())	
 
 	out, err := tmpl.Render(*td)
 	if err != nil {

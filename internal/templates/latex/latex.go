@@ -42,6 +42,12 @@ const (
 	filename = "./internal/templates/latex/latex.tmpl"
 )
 
+// FileExtension returns the file extension for LaTeX templates.
+func (l *Latex) FileExtension() string {
+	return ".tex"
+}
+
+// Render processes the LaTeX template with the provided tabular data.
 func (l *Latex) Render(td reader.TabularData) (string, error) {
 
 	escapeAllStrings(&td)
