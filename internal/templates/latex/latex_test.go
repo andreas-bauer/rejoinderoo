@@ -176,3 +176,38 @@ func TestAsDocHeaders(t *testing.T) {
 	}
 }
 
+func TestLatexFileExtension(t *testing.T) {
+	lt := NewLatexTemplate()
+	got := lt.FileExtension()
+	want := ".tex"
+	if got != want {
+		t.Errorf("FileExtension() = %q; want %q", got, want)
+	}
+}
+func TestEscape(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{"NoSpecialChars", "NoSpecialChars"},
+		{"100% sure", "100\\% sure"},
+		{"Price is $5", "Price is \\$5"},
+		{"Use #hashtag", "Use \\#hashtag"},
+		{"A_B_C", "A\\_B\\_C"},
+		{"Curly{Braces}", "Curly\\{Braces\\}"},
+		{"Ampersand & more", "Ampersand \\& more"},
+		{"Backslash \\", "Backslash \\textbackslash{}"},
+		{"Tilde~Caret^", "Tilde\\textasciitilde{}Caret\\textasciicircum{}"},
+		{"All $#&_{}%~^\\", "All \\$\\#\\&\\_\\{\\}\\%\\textasciitilde{}\\textasciicircum{}\\textbackslash{}"},
+		{"", ""},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			got := escape(tt.input)
+			if got != tt.expected {
+				t.Errorf("escape(%q) = %q; want %q", tt.input, got, tt.expected)
+			}
+		})
+	}
+}
