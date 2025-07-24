@@ -122,3 +122,40 @@ func TestAsDocresponses(t *testing.T) {
 		})
 	}
 }
+
+func TestTypstFileExtension(t *testing.T) {
+	lt := NewTypstTemplate()
+	got := lt.FileExtension()
+	want := ".typ"
+	if got != want {
+		t.Errorf("FileExtension() = %q; want %q", got, want)
+	}
+}
+func TestEscape(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{"", ""},
+		{"plain text", "plain text"},
+		{"\\", "\\\\"},
+		{"{", "\\{"},
+		{"}", "\\}"},
+		{"[", "\\["},
+		{"]", "\\]"},
+		{"#", "\\#"},
+		{"\\{[#]}", "\\\\\\{\\[\\#\\]\\}"},
+		{"Hello #1 [test] {ok}", "Hello \\#1 \\[test\\] \\{ok\\}"},
+		{"multiple \\# special {chars}", "multiple \\\\\\# special \\{chars\\}"},
+		{"no special chars", "no special chars"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			got := escape(tt.input)
+			if got != tt.expected {
+				t.Errorf("escape(%q) = %q; want %q", tt.input, got, tt.expected)
+			}
+		})
+	}
+}
