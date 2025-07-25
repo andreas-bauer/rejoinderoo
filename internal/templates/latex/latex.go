@@ -7,7 +7,8 @@ import (
 	"text/template"
 
 	"github.com/andreas-bauer/rejoinderoo/internal/reader"
-	"github.com/andreas-bauer/rejoinderoo/internal/templates"
+	"github.com/andreas-bauer/rejoinderoo/internal/templates/common"
+	templates "github.com/andreas-bauer/rejoinderoo/internal/templates/common"
 )
 
 // Latex handles escaping special characters for LaTeX templates.
@@ -71,7 +72,7 @@ func (l *Latex) Render(td reader.TabularData) (string, error) {
 }
 
 func createDoc(td *reader.TabularData) document {
-	allRevIDs := templates.ExtractReviewers(td.Records)
+	allRevIDs := common.ExtractReviewers(td.Records)
 	headers := asDocHeaders(td.Headers)
 	responses := asDocResponses(td.Headers, td.Records)
 

@@ -8,8 +8,6 @@ import (
 
 	"github.com/andreas-bauer/rejoinderoo/internal/reader"
 	"github.com/andreas-bauer/rejoinderoo/internal/templates"
-	"github.com/andreas-bauer/rejoinderoo/internal/templates/latex"
-	"github.com/andreas-bauer/rejoinderoo/internal/templates/typst"
 	"github.com/andreas-bauer/rejoinderoo/internal/tui"
 )
 
@@ -41,18 +39,12 @@ func main() {
 
 	td.Keep(fd.SelectedHeaders)
 
-	var tmpl templates.Template
-	switch fd.Template {
-	case templates.TypstTemplate:
-		tmpl = typst.NewTypstTemplate()
-	case templates.LatexTemplate:
-		tmpl = latex.NewLatexTemplate()
-	default:
-		fmt.Fprintln(os.Stderr, "Error: Unknown template type:", fd.Template)
-		os.Exit(1)
-	}
+	tmpl := templates.NewTemplate(fd.Template)
 
-	fd.Filename = appendExtensionIfNotPresent(fd.Filename, tmpl.FileExtension())	
+	if strings.TrimSpace(fd.Filename) == "" {
+		fd.Filename = "output"
+	}
+	fd.Filename = appendExtensionIfNotPresent(fd.Filename, tmpl.FileExtension())
 
 	out, err := tmpl.Render(*td)
 	if err != nil {
