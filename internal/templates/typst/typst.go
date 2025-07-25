@@ -1,6 +1,7 @@
 package typst
 
 import (
+	_ "embed"
 	"fmt"
 	"html/template"
 	"strings"
@@ -28,9 +29,8 @@ type document struct {
 	Responses   []response
 }
 
-const (
-	filename = "./internal/templates/typst/typst.tmpl"
-)
+//go:embed typst.tmpl
+var file string
 
 func NewTypstTemplate() *Typst {
 	return &Typst{}
@@ -47,7 +47,7 @@ func (t *Typst) Render(td reader.TabularData) (string, error) {
 	escapeAllStrings(&td)
 	doc := createDoc(&td)
 
-	tmpl, err := template.ParseFiles(filename)
+	tmpl, err := template.New("typst").Parse(file)
 
 	if err != nil {
 		fmt.Println(err.Error())

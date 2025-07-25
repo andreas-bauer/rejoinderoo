@@ -1,6 +1,7 @@
 package latex
 
 import (
+	_ "embed"
 	"fmt"
 	"strings"
 	"text/template"
@@ -38,9 +39,8 @@ func NewLatexTemplate() *Latex {
 	return &Latex{}
 }
 
-const (
-	filename = "./internal/templates/latex/latex.tmpl"
-)
+//go:embed latex.tmpl
+var file string
 
 // FileExtension returns the file extension for LaTeX templates.
 func (l *Latex) FileExtension() string {
@@ -53,7 +53,7 @@ func (l *Latex) Render(td reader.TabularData) (string, error) {
 	escapeAllStrings(&td)
 	doc := createDoc(&td)
 
-	tmpl, err := template.ParseFiles(filename)
+	tmpl, err := template.New("latex").Parse(file)
 
 	if err != nil {
 		fmt.Println(err.Error())
