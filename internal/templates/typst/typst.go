@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/andreas-bauer/rejoinderoo/internal/reader"
-	"github.com/andreas-bauer/rejoinderoo/internal/templates"
+	"github.com/andreas-bauer/rejoinderoo/internal/templates/common"
 )
 
 // Typst handles escaping special characters for Typst templates.
@@ -65,7 +65,7 @@ func (t *Typst) Render(td reader.TabularData) (string, error) {
 }
 
 func createDoc(td *reader.TabularData) document {
-	allRevIDs := templates.ExtractReviewers(td.Records)
+	allRevIDs := common.ExtractReviewers(td.Records)
 	responses := asDocResponses(td.Headers, td.Records)
 
 	return document{
@@ -83,7 +83,7 @@ func asDocResponses(headers []string, records [][]string) []response {
 		}
 		response := &response{
 			ID:         rec[0],
-			ReviewerID: templates.ExtractReviewerID(rec[0]),
+			ReviewerID: common.ExtractReviewerID(rec[0]),
 			Records:    make([]record, len(headers)-1),
 		}
 		for i, h := range headers {

@@ -13,7 +13,7 @@ type FormData struct {
 	Filename         string
 	AvailableHeaders []string
 	SelectedHeaders  []string
-	Template         templates.TemplateType
+	Template         string
 }
 
 func RunFilePicker() string {
@@ -47,13 +47,18 @@ func RunForm(fd *FormData) error {
 				Value(&fd.SelectedHeaders),
 		),
 		huh.NewGroup(
-			huh.NewSelect[templates.TemplateType]().Title("Template").
+			huh.NewSelect[string]().Title("Template").
 				Description("Select the output template for the rejoinder").
-				Options(
-					huh.NewOption("LaTeX", templates.LatexTemplate).Selected(true),
-					huh.NewOption("Typst", templates.TypstTemplate),
-				).
-				Value(&fd.Template),
+				OptionsFunc(func() []huh.Option[string] {
+					var options []huh.Option[string]
+					for _, name := range templates.Available() {
+						options = append(options, huh.NewOption(name, name))
+					}
+					if len(options) > 0 {
+						options[0].Selected(true)
+					}
+					return options
+				}, &fd.Template),
 		),
 		huh.NewGroup(
 			huh.NewInput().Title("Filename").

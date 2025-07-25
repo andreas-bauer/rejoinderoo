@@ -11,8 +11,6 @@ import (
 
 	"github.com/andreas-bauer/rejoinderoo/internal/reader"
 	"github.com/andreas-bauer/rejoinderoo/internal/templates"
-	"github.com/andreas-bauer/rejoinderoo/internal/templates/latex"
-	"github.com/andreas-bauer/rejoinderoo/internal/templates/typst"
 )
 
 var size10MB int64 = 10 << 20
@@ -59,7 +57,7 @@ func (h *Handler) ColSelectForm(w http.ResponseWriter, r *http.Request) {
 		Templates []string
 	}{
 		Headers:   tb.Headers,
-		Templates: []string{string(templates.LatexTemplate), string(templates.TypstTemplate)},
+		Templates: templates.Available(),
 	}
 
 	if err := h.tmpl.ExecuteTemplate(w, "select-column-form", tmplArgs); err != nil {
@@ -93,13 +91,7 @@ func (h *Handler) Generate(w http.ResponseWriter, r *http.Request) {
 
 	td.Keep(selectedHeaders)
 
-	var genTmpl templates.Template
-	switch r.FormValue("gen-template") {
-	case "typst":
-		genTmpl = typst.NewTypstTemplate()
-	default:
-		genTmpl = latex.NewLatexTemplate()
-	}
+	genTmpl := templates.NewTemplate(r.FormValue("gen-template"))
 
 	out, err := genTmpl.Render(*td)
 	if err != nil {
