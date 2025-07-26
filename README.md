@@ -28,7 +28,7 @@ make build
 
 ## Usage
 
-TODO: Add GIF
+![Demo usage of Rejoinderoo](./assets/demo.gif)
 
 ### Color coding of responses
 
