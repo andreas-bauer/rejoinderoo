@@ -19,11 +19,11 @@ make help
 # to install all dependencies
 make deps
 
-# to build the program in the `bin` directory
+# to build the program
 make build
 
 # to run the compiled program
-./bin/rejoinderoo
+./rejoinderoo
 ```
 
 ## Usage

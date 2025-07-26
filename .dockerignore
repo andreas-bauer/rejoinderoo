@@ -1,0 +1,10 @@
+.git
+.gitignore
+.DS_Store
+.air.toml
+.ropeproject
+.vscode
+bin
+tmp
+*.out
+*.log

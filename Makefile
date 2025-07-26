@@ -1,5 +1,5 @@
 GOCMD=go
-BINARY_DIR=bin
+BINARY_DIR=.
 
 .PHONY: deps
 deps: ## Install all Go dependencies
@@ -8,7 +8,10 @@ deps: ## Install all Go dependencies
 .PHONY: clean
 clean: ## Clean up all build artifacts
 	$(GOCMD) clean
-	rm -rf $(BINARY_DIR)
+	rm -f $(BINARY_DIR)/rejoinderoo \
+		$(BINARY_DIR)/rejoinderoo.exe \
+		$(BINARY_DIR)/server \
+		$(BINARY_DIR)/server.exe
 
 .PHONY: test
 test: ## Run all tests
@@ -26,6 +29,12 @@ build-server: ## Build server application
 build-cli: ## Build CLI application
 	mkdir -p $(BINARY_DIR)
 	$(GOCMD) build -o $(BINARY_DIR)/rejoinderoo ./cmd/cli/
+
+.PHONY: build-docker
+build-docker: ## Build Docker image for server
+	@GO_VERSION=$$(grep '^go ' go.mod | cut -d' ' -f2) && \
+	echo "Using Go version $$GO_VERSION from go.mod" && \
+	docker build --build-arg GO_VERSION=$$GO_VERSION -t rejoinderoo .
 
 .PHONY: help
 help:

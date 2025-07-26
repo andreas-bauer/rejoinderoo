@@ -5,6 +5,10 @@
 ./*.typ
 
 # Build artifacts
-bin/
 tmp/
 coverage.out
+
+rejoinderoo
+rejoinderoo.exe
+server
+server.exe
