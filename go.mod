@@ -1,6 +1,6 @@
 module github.com/andreas-bauer/rejoinderoo
 
-go 1.24.2
+go 1.24
 
 require (
 	github.com/charmbracelet/huh v0.7.0
