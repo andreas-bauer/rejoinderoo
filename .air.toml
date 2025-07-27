@@ -4,7 +4,7 @@ tmp_dir = "tmp"
 
 [build]
   args_bin = []
-  bin = "./bin/server"
+  bin = "./server"
   cmd = "make build-server"
   delay = 1000
   exclude_dir = ["assets", "tmp", "vendor", "testdata"]
