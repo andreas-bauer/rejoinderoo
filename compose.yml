@@ -1,0 +1,8 @@
+version: "3.8"
+
+services:
+  rejoinderoo:
+    build: .
+    image: rejoinderoo
+    ports:
+      - "8080:8080"
