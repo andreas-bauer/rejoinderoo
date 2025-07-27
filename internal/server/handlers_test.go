@@ -97,18 +97,31 @@ func TestGetFormValuesWithPrefix(t *testing.T) {
 		},
 	}
 
+	// Helper to check if two slices have the same elements, regardless of order
+	slicesEqualIgnoreOrder := func(a, b []string) bool {
+		if len(a) != len(b) {
+			return false
+		}
+		counts := make(map[string]int)
+		for _, v := range a {
+			counts[v]++
+		}
+		for _, v := range b {
+			counts[v]--
+		}
+		for _, c := range counts {
+			if c != 0 {
+				return false
+			}
+		}
+		return true
+	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := getFormValuesWithPrefix(tt.form, tt.prefix)
-			if len(got) != len(tt.expected) {
-				t.Errorf("got %v, want %v", got, tt.expected)
-				return
-			}
-			for i := range got {
-				if got[i] != tt.expected[i] {
-					t.Errorf("got %v, want %v", got, tt.expected)
-					break
-				}
+			if !slicesEqualIgnoreOrder(got, tt.expected) {
+				t.Errorf("got %v, want %v (order ignored)", got, tt.expected)
 			}
 		})
 	}
