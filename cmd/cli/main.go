@@ -20,13 +20,20 @@ func main() {
 		inFile = tui.RunFilePicker()
 	}
 
-	td, err := reader.NewReader(inFile)
+	reader, err := reader.NewReader(inFile)
 	if err != nil {
-		fmt.Println("Error reading file:", err)
-		fmt.Println("Unable to proceed.")
-
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
+
+	file, errR1 := os.Open(inFile)
+	td, errR2 := reader.Read(file)
+	if errR1 != nil || errR2 != nil {
+		fmt.Println("Error reading file:")
+		fmt.Println("Unable to proceed.")
+		os.Exit(1)
+	}
+	defer file.Close()
 
 	fd := &tui.FormData{
 		AvailableHeaders: td.Headers,
