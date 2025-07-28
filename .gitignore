@@ -8,7 +8,7 @@
 tmp/
 coverage.out
 
-rejoinderoo
-rejoinderoo.exe
-server
-server.exe
+/rejoinderoo
+/rejoinderoo.exe
+/server
+/server.exe
