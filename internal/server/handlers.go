@@ -39,24 +39,30 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) ColSelectForm(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(size10MB)
 
-	file, _, err := h.assertFormFile(r)
+	file, filename, err := h.assertFormFile(r)
 	if err != nil {
 		h.tmpl.ExecuteTemplate(w, "error", err.Error())
 		return
 	}
 	defer file.Close()
 
-	csv := reader.CSVReader{}
-	tb, err := csv.Read(file)
+	reader, err := reader.NewReader(filename)
 	if err != nil {
-		fmt.Println("Error reading CSV")
+		h.tmpl.ExecuteTemplate(w, "error", "Error creating reader: "+err.Error())
+		return
+	}
+
+	td, err := reader.Read(file)
+	if err != nil {
+		h.tmpl.ExecuteTemplate(w, "error", "Error reading file: "+err.Error())
+		return
 	}
 
 	tmplArgs := struct {
 		Headers   []string
 		Templates []string
 	}{
-		Headers:   tb.Headers,
+		Headers:   td.Headers,
 		Templates: templates.Available(),
 	}
 
@@ -83,10 +89,16 @@ func (h *Handler) Generate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	csv := reader.CSVReader{}
-	td, err := csv.Read(file)
+	reader, err := reader.NewReader(filename)
 	if err != nil {
-		fmt.Println("Error reading CSV")
+		h.tmpl.ExecuteTemplate(w, "error", "Error creating reader: "+err.Error())
+		return
+	}
+
+	td, err := reader.Read(file)
+	if err != nil {
+		h.tmpl.ExecuteTemplate(w, "error", "Error reading file: "+err.Error())
+		return
 	}
 
 	td.Keep(selectedHeaders)
@@ -136,16 +148,19 @@ func (h *Handler) assertFormFile(r *http.Request) (multipart.File, string, error
 
 func getFormValuesWithPrefix(formValues url.Values, prefix string) []string {
 	var values []string
-	for key, vals := range formValues {
+	for key := range formValues {
 		if strings.HasPrefix(key, prefix) {
-			values = append(values, vals...)
+			withoutPrefix := strings.TrimPrefix(key, prefix)
+			values = append(values, withoutPrefix)
 		}
 	}
 	return values
 }
 
 func isAllowedContentType(ct string) bool {
-	return ct == "text/csv" || ct == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+	return ct == "text/csv" ||
+		ct == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+		ct == "application/vnd.ms-excel"
 }
 
 func fileNameWithoutExtension(fileName string) string {

@@ -3,7 +3,6 @@ package reader
 import (
 	"fmt"
 	"io"
-	"os"
 	"path/filepath"
 	"strings"
 )
@@ -21,29 +20,22 @@ type TabularData struct {
 
 // NewReader creates an appropriate TabularReader based on the file extension.
 // Supported formats: CSV, XLSX, XLS
-func NewReader(filename string) (*TabularData, error) {
+func NewReader(filename string) (TabularReader, error) {
 	filename = strings.ToLower(filename)
-
-	// Open file
-	file, err := os.Open(filename)
-	if err != nil {
-		return nil, fmt.Errorf("error opening file: %w", err)
-	}
-	defer file.Close()
-
-	var r TabularReader
-	// Create appropriate reader based on file extension
 	fileExt := filepath.Ext(filename)
 	switch fileExt {
 	case ".csv":
-		r = CSVReader{}
+		return &CSVReader{}, nil
 	case ".xlsx", ".xls":
-		r = ExcelReader{}
+		return &ExcelReader{}, nil
 	default:
-		return nil, fmt.Errorf("Unsupported file extension: %s", fileExt)
+		return nil, fmt.Errorf("file extension '%s' is not supported. Supported extensions are: %v", fileExt, SupportedFileExtensions())
 	}
+}
 
-	return r.Read(file)
+// SupportedFileExtensions returns a list of file extensions that are supported.
+func SupportedFileExtensions() []string {
+	return []string{".csv", ".xlsx", ".xls"}
 }
 
 // Keep filters the headers and records by removing all headers and the corresponding records
