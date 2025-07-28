@@ -13,48 +13,68 @@ import (
 	"github.com/andreas-bauer/rejoinderoo/internal/templates"
 )
 
-var size10MB int64 = 10 << 20
+const (
+	maxUploadSize      = 10 << 20 // 10 MB
+	minSelectedColumns = 3
+)
 
-// Handler struct for handling HTTP requests
+const (
+	templateIndex        = "index.html"
+	templateError        = "error"
+	templateSelectColumn = "select-column-form"
+	templateResult       = "result"
+)
+
+const (
+	formFieldFile        = "file"
+	formFieldGenTemplate = "gen-template"
+	headerPrefix         = "header-"
+)
+
+// Handler struct for handling HTTP requests.
 type Handler struct {
 	tmpl *template.Template
 }
 
-// NewHandler creates a new Handler instance
+// NewHandler creates a new Handler instance.
 func NewHandler(html *template.Template) *Handler {
 	return &Handler{
 		tmpl: html,
 	}
 }
 
+// Index serves the main page.
 func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
 		return
 	}
-
-	h.tmpl.ExecuteTemplate(w, "index.html", nil)
+	h.tmpl.ExecuteTemplate(w, templateIndex, nil)
 }
 
+// ColSelectForm handles the file upload and displays the column selection form.
 func (h *Handler) ColSelectForm(w http.ResponseWriter, r *http.Request) {
-	r.ParseMultipartForm(size10MB)
+	if err := r.ParseMultipartForm(maxUploadSize); err != nil {
+		h.tmpl.ExecuteTemplate(w, templateError, "The uploaded file is too large.")
+		return
+	}
 
-	file, filename, err := h.assertFormFile(r)
+	file, handler, err := h.getFormFile(r)
 	if err != nil {
-		h.tmpl.ExecuteTemplate(w, "error", err.Error())
+		h.tmpl.ExecuteTemplate(w, templateError, err.Error())
 		return
 	}
 	defer file.Close()
 
-	reader, err := reader.NewReader(filename)
+	fileReader, err := reader.NewReader(handler.Filename)
 	if err != nil {
-		h.tmpl.ExecuteTemplate(w, "error", "Error creating reader: "+err.Error())
+		h.tmpl.ExecuteTemplate(w, templateError, "Unsupported file type: "+err.Error())
 		return
 	}
 
-	td, err := reader.Read(file)
+	tableData, err := fileReader.Read(file)
 	if err != nil {
-		h.tmpl.ExecuteTemplate(w, "error", "Error reading file: "+err.Error())
+		h.tmpl.ExecuteTemplate(w, templateError, "Error reading file as table data: "+err.Error())
 		return
 	}
 
@@ -62,55 +82,58 @@ func (h *Handler) ColSelectForm(w http.ResponseWriter, r *http.Request) {
 		Headers   []string
 		Templates []string
 	}{
-		Headers:   td.Headers,
+		Headers:   tableData.Headers,
 		Templates: templates.Available(),
 	}
 
-	if err := h.tmpl.ExecuteTemplate(w, "select-column-form", tmplArgs); err != nil {
-		http.Error(w, "Error rendering template: "+err.Error(), http.StatusInternalServerError)
+	if err := h.tmpl.ExecuteTemplate(w, templateSelectColumn, tmplArgs); err != nil {
+		h.tmpl.ExecuteTemplate(w, templateError, "Error rendering results: "+err.Error())
 		return
 	}
 }
 
+// Generate creates the output document based on the user's selection.
 func (h *Handler) Generate(w http.ResponseWriter, r *http.Request) {
-	r.ParseMultipartForm(size10MB)
+	if err := r.ParseMultipartForm(maxUploadSize); err != nil {
+		h.tmpl.ExecuteTemplate(w, templateError, "The uploaded file is too large.")
+		return
+	}
 
-	file, filename, err := h.assertFormFile(r)
+	file, handler, err := h.getFormFile(r)
 	if err != nil {
-		h.tmpl.ExecuteTemplate(w, "error", err.Error())
+		h.tmpl.ExecuteTemplate(w, templateError, err.Error())
 		return
 	}
 	defer file.Close()
 
-	selectedHeaders := getFormValuesWithPrefix(r.Form, "header-")
-
-	if len(selectedHeaders) < 3 {
-		h.tmpl.ExecuteTemplate(w, "error", "select at least 3 columns")
+	selectedHeaders := getFormValuesWithPrefix(r.Form, headerPrefix)
+	if len(selectedHeaders) < minSelectedColumns {
+		h.tmpl.ExecuteTemplate(w, templateError, fmt.Sprintf("Please select at least %d columns.", minSelectedColumns))
 		return
 	}
 
-	reader, err := reader.NewReader(filename)
+	fileReader, err := reader.NewReader(handler.Filename)
 	if err != nil {
-		h.tmpl.ExecuteTemplate(w, "error", "Error creating reader: "+err.Error())
+		h.tmpl.ExecuteTemplate(w, templateError, "Unsupported file type: "+err.Error())
 		return
 	}
 
-	td, err := reader.Read(file)
+	tableData, err := fileReader.Read(file)
 	if err != nil {
-		h.tmpl.ExecuteTemplate(w, "error", "Error reading file: "+err.Error())
+		h.tmpl.ExecuteTemplate(w, templateError, "Error reading file as table data: "+err.Error())
 		return
 	}
 
-	td.Keep(selectedHeaders)
+	tableData.Keep(selectedHeaders)
 
-	genTmpl := templates.NewTemplate(r.FormValue("gen-template"))
+	templateName := r.FormValue(formFieldGenTemplate)
+	genTmpl := templates.NewTemplate(templateName)
 
-	out, err := genTmpl.Render(*td)
+	out, err := genTmpl.Render(*tableData)
 	if err != nil {
-		fmt.Println("Error rendering template:", err)
+		h.tmpl.ExecuteTemplate(w, templateError, "Error generating output: "+err.Error())
+		return
 	}
-
-	filenameWithoutExt := fileNameWithoutExtension(filename)
 
 	doc := struct {
 		Content   string
@@ -118,45 +141,45 @@ func (h *Handler) Generate(w http.ResponseWriter, r *http.Request) {
 		Extension string
 	}{
 		Content:   out,
-		Filename:  filenameWithoutExt,
+		Filename:  fileNameWithoutExtension(handler.Filename),
 		Extension: genTmpl.FileExtension(),
 	}
 
-	if err := h.tmpl.ExecuteTemplate(w, "result", doc); err != nil {
-		http.Error(w, "Error rendering template: "+err.Error(), http.StatusInternalServerError)
-		return
+	if err := h.tmpl.ExecuteTemplate(w, templateResult, doc); err != nil {
+		h.tmpl.ExecuteTemplate(w, templateError, "Error rendering results: "+err.Error())
 	}
-
 }
 
-func (h *Handler) assertFormFile(r *http.Request) (multipart.File, string, error) {
-	file, handler, err := r.FormFile("file")
-	if err == http.ErrMissingFile {
-		return nil, handler.Filename, errors.New("no file submitted")
-	}
+// getFormFile retrieves the uploaded file from the request, ensuring it's valid.
+// The caller is responsible for closing the returned multipart.File.
+func (h *Handler) getFormFile(r *http.Request) (multipart.File, *multipart.FileHeader, error) {
+	file, handler, err := r.FormFile(formFieldFile)
 	if err != nil {
-		return nil, handler.Filename, errors.New("error retrieving the file")
+		if errors.Is(err, http.ErrMissingFile) {
+			return nil, nil, errors.New("no file submitted")
+		}
+		return nil, nil, fmt.Errorf("error retrieving the file: %w", err)
 	}
-	defer file.Close()
 
 	if !isAllowedContentType(handler.Header.Get("Content-Type")) {
-		return nil, handler.Filename, errors.New("file type is not supported")
+		return nil, nil, fmt.Errorf("file type '%s' is not supported", handler.Header.Get("Content-Type"))
 	}
 
-	return file, handler.Filename, nil
+	return file, handler, nil
 }
 
+// getFormValuesWithPrefix extracts values from a form whose keys have a given prefix.
 func getFormValuesWithPrefix(formValues url.Values, prefix string) []string {
 	var values []string
 	for key := range formValues {
 		if strings.HasPrefix(key, prefix) {
-			withoutPrefix := strings.TrimPrefix(key, prefix)
-			values = append(values, withoutPrefix)
+			values = append(values, strings.TrimPrefix(key, prefix))
 		}
 	}
 	return values
 }
 
+// isAllowedContentType checks if the content type is in the allowed list.
 func isAllowedContentType(ct string) bool {
 	return ct == "text/csv" ||
 		ct == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
