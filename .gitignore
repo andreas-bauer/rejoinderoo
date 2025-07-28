@@ -1,8 +1,8 @@
-./*.csv
-./*.xslx
-./*.xls
-./*.tex
-./*.typ
+/*.csv
+/*.xslx
+/*.xls
+/*.tex
+/*.typ
 
 # Build artifacts
 tmp/
