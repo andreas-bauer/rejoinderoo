@@ -124,6 +124,8 @@ func (h *Handler) Generate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	selectedHeaders = sortHeaders(selectedHeaders, tableData.Headers)
+
 	tableData.Keep(selectedHeaders)
 
 	templateName := r.FormValue(formFieldGenTemplate)
@@ -148,6 +150,25 @@ func (h *Handler) Generate(w http.ResponseWriter, r *http.Request) {
 	if err := h.tmpl.ExecuteTemplate(w, templateResult, doc); err != nil {
 		h.tmpl.ExecuteTemplate(w, templateError, "Error rendering results: "+err.Error())
 	}
+}
+
+func sortHeaders(selectedHeaders []string, originalOrder []string) []string {
+	var ordered []string
+	for _, header := range originalOrder {
+		if contains(selectedHeaders, header) {
+			ordered = append(ordered, header)
+		}
+	}
+	return ordered
+}
+
+func contains(selectedHeaders []string, header string) bool {
+	for _, h := range selectedHeaders {
+		if h == header {
+			return true
+		}
+	}
+	return false
 }
 
 // getFormFile retrieves the uploaded file from the request, ensuring it's valid.
