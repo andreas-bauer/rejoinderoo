@@ -8,6 +8,34 @@ An example of a generated rejoinder document is shown in [assets/example.pdf](./
 
 <p align="center"><img src="assets/screenshot.png"></p>
 
+## How to use
+
+### Prepare your review comments
+
+Prepare your CSV or Excel file with the review comments.
+The first columns should contain an ID, the reviewer's comment, and the response to that comment.
+
+See [assets/small.xlsx](./assets/small.xlsx) or structure your spreadsheet like this:
+
+| ID     | Comment                | Response         |
+|--------|------------------------|------------------|
+| Rev1.1 | This is a comment.     | We appreciate the feedback.           |
+| Rev2.2 | Another comment here.  | We will take this into account.        |
+
+### Run Rejoinderoo
+
+You can use Rejoinderoo in two ways:
+
+As a **command-line tool** after you downloaded the binary from the [releases page](https://github.com/andreas-bauer/rejoinderoo/releases).
+
+```sh
+./rejoinderoo
+```
+
+![Demo usage of Rejoinderoo](./assets/demo.gif)
+
+Or use the **web** version at [rejoinderoo.andreasbauer.org](https://rejoinderoo.andreasbauer.org).
+
 ## Development
 
 This project uses a Makefile to manage all build and test tasks.
@@ -24,11 +52,22 @@ make build
 
 # to run the compiled program
 ./rejoinderoo
+
+# to run the web server
+./server
 ```
 
-## Usage
+### Containerized server
 
-![Demo usage of Rejoinderoo](./assets/demo.gif)
+You can also build and run the web server in a Docker container.
+
+```sh
+# build the Docker image
+make build-docker
+
+# run the Docker container
+docker compose up
+```
 
 ### Color coding of responses
 
