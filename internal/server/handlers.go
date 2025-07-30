@@ -7,6 +7,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/url"
+	"slices"
 	"strings"
 
 	"github.com/andreas-bauer/rejoinderoo/internal/reader"
@@ -155,20 +156,11 @@ func (h *Handler) Generate(w http.ResponseWriter, r *http.Request) {
 func sortHeaders(selectedHeaders []string, originalOrder []string) []string {
 	var ordered []string
 	for _, header := range originalOrder {
-		if contains(selectedHeaders, header) {
+		if slices.Contains(selectedHeaders, header) {
 			ordered = append(ordered, header)
 		}
 	}
 	return ordered
-}
-
-func contains(selectedHeaders []string, header string) bool {
-	for _, h := range selectedHeaders {
-		if h == header {
-			return true
-		}
-	}
-	return false
 }
 
 // getFormFile retrieves the uploaded file from the request, ensuring it's valid.
