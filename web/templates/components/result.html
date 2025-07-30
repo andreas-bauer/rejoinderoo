@@ -34,7 +34,7 @@
 
       const downloadLink = document.createElement("a");
       downloadLink.href = url;
-      downloadLink.download = "{{- .Filename}}.{{- .Extension}}";
+      downloadLink.download = "{{- .Filename}}{{- .Extension}}";
       document.body.appendChild(downloadLink);
       downloadLink.click();
 
