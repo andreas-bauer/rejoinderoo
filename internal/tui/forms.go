@@ -49,16 +49,8 @@ func RunForm(fd *FormData) error {
 		huh.NewGroup(
 			huh.NewSelect[string]().Title("Template").
 				Description("Select the output template for the rejoinder").
-				OptionsFunc(func() []huh.Option[string] {
-					var options []huh.Option[string]
-					for _, name := range templates.Available() {
-						options = append(options, huh.NewOption(name, name))
-					}
-					if len(options) > 0 {
-						options[0].Selected(true)
-					}
-					return options
-				}, &fd.Template),
+				Options(huh.NewOptions(templates.Available()...)...).
+				Value(&fd.Template),
 		),
 		huh.NewGroup(
 			huh.NewInput().Title("Filename").
@@ -85,7 +77,7 @@ func PrintSummary(fd *FormData) {
 	fmt.Fprintf(&sb,
 		"%s\n\nTempate: %s\nFilename: %s\n\n%s\n%s",
 		lipgloss.NewStyle().Bold(true).Render("✅ Rejoinder created"),
-		keyword(string(fd.Template)),
+		keyword(fd.Template),
 		keyword(fd.Filename),
 		"⭐️ If you enjoy this project, please consider giving it a star on GitHub:",
 		keyword("   https://github.com/andreas-bauer/rejoinderoo"),
