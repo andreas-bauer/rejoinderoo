@@ -17,10 +17,10 @@ The first columns should contain an ID, the reviewer's comment, and the response
 
 See [assets/small.xlsx](./assets/small.xlsx) or structure your spreadsheet like this:
 
-| ID     | Comment                | Response         |
-|--------|------------------------|------------------|
-| Rev1.1 | This is a comment.     | We appreciate the feedback.           |
-| Rev2.2 | Another comment here.  | We will take this into account.        |
+| ID     | Comment               | Response                        |
+| ------ | --------------------- | ------------------------------- |
+| Rev1.1 | This is a comment.    | We appreciate the feedback.     |
+| Rev2.2 | Another comment here. | We will take this into account. |
 
 ### Run Rejoinderoo
 
@@ -76,9 +76,25 @@ which is the first selected field.
 To determine different reviewers, the prefix of the ID field value is used until the first delimiter (`.`, `-`, or `:`).
 E.g., `Rev1.3` becomes `Rev1` and `R1:3` becomes `R1`.
 
-In the next step, a custom LaTeX color is created for each reviewer that can be adjusted.
+In the next step, a custom LaTeX (or other template) color is created for each reviewer that can be adjusted.
 
 `\colorlet{colorRev1}{blue!15!white}`
+
+## macOS
+
+If you are using macOS, you will encounter an security warning when running the binary.
+
+![macOS security warning](./assets/macos-warning1.png)
+
+To bypass this warning, you can open the Terminal and run the following command:
+
+```sh
+xattr -d com.apple.quarantine ./rejoinderoo
+```
+
+or you can adjust the security settings in the System Preferences:
+
+![macOS security warning](./assets/macos-warning2.png)
 
 ## License
 
