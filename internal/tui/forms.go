@@ -84,9 +84,6 @@ func PrintSummary(fd *FormData) {
 	)
 	fmt.Println(
 		lipgloss.NewStyle().
-			Width(80).
-			BorderStyle(lipgloss.RoundedBorder()).
-			BorderForeground(lipgloss.Color("63")).
 			Padding(1, 2).
 			Render(sb.String()),
 	)
