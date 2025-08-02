@@ -17,10 +17,10 @@ The first columns should contain an ID, the reviewer's comment, and the response
 
 See [assets/small.xlsx](./assets/small.xlsx) or structure your spreadsheet like this:
 
-| ID     | Comment               | Response                        |
-| ------ | --------------------- | ------------------------------- |
-| Rev1.1 | This is a comment.    | We appreciate the feedback.     |
-| Rev2.2 | Another comment here. | We will take this into account. |
+| ID     | Comment                | Response         |
+|--------|------------------------|------------------|
+| Rev1.1 | This is a comment.     | We appreciate the feedback.           |
+| Rev2.2 | Another comment here.  | We will take this into account.        |
 
 ### Run Rejoinderoo
 
