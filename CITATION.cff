@@ -13,11 +13,11 @@ authors:
     orcid: 'https://orcid.org/0000-0002-2916-4020'
 abstract: >-
   Rejoinderoo creates a rejoinder (response to reviewers)
-  LaTeX document based on a CSV file
+  LaTeX/Typst document based on a spreadsheet file
 keywords:
   - latex
   - academic
   - rejoinder
 license: MIT
-version: 1.0.0
-date-released: '2025-04-10'
+version: 2.0.0
+date-released: '2025-08-02'
