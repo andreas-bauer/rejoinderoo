@@ -17,10 +17,10 @@ The first columns should contain an ID, the reviewer's comment, and the response
 
 See [assets/small.xlsx](./assets/small.xlsx) or structure your spreadsheet like this:
 
-| ID     | Comment                | Response         |
-|--------|------------------------|------------------|
-| Rev1.1 | This is a comment.     | We appreciate the feedback.           |
-| Rev2.2 | Another comment here.  | We will take this into account.        |
+| ID     | Comment               | Response                        |
+| ------ | --------------------- | ------------------------------- |
+| Rev1.1 | This is a comment.    | We appreciate the feedback.     |
+| Rev2.2 | Another comment here. | We will take this into account. |
 
 ### Run Rejoinderoo
 
@@ -95,6 +95,11 @@ xattr -d com.apple.quarantine ./rejoinderoo
 or you can adjust the security settings in the System Preferences:
 
 ![macOS security warning](./assets/macos-warning2.png)
+
+## Additional resources
+
+- Highlight changes in the manuscript with [LaTeX Revision Mode](https://gist.github.com/andreas-bauer/c8ca14fc031883173ea2ec2867e35c37)
+- Create CRediT (Contributor Roles Taxonomy) statements with [CRediT Maker](https://github.com/andreas-bauer/credit-maker)
 
 ## License
 
