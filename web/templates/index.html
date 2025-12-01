@@ -11,8 +11,8 @@
     <script
       src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.7/dist/htmx.min.js"
       integrity="sha384-ZBXiYtYQ6hJ2Y0ZNoYuI+Nq5MqWBr+chMrS/RkXpNzQCApHEhOt2aY8EJgqwHLkJ"
-      crossorigin="anonymous">
-    </script>
+      crossorigin="anonymous"
+    ></script>
     <style>
       .alert-error {
         border-left: 4px solid var(--del-color, #e53935);
@@ -47,9 +47,24 @@
         </nav>
 
         <form id="form" hx-encoding="multipart/form-data">
+          <label>
+            Step 1. Prepare your CSV or Excel file with the review comments.
+            <small>
+              <br />
+              The first columns should contain an ID, the reviewer's comment,
+              and the response to that comment.
+              <br />
+              See or resue
+              <a
+                href="https://raw.githubusercontent.com/andreas-bauer/rejoinderoo/main/assets/small.xlsx"
+                >small.xlsx</a
+              >
+            </small>
+          </label>
+
           <fieldset>
             <label>
-              Upload Spreadsheet
+              Step 2. Upload Spreadsheet
               <input
                 type="file"
                 name="file"
