@@ -15,7 +15,7 @@ An example of a generated rejoinder document is shown in [assets/example.pdf](./
 Prepare your CSV or Excel file with the review comments.
 The first columns should contain an ID, the reviewer's comment, and the response to that comment.
 
-See [assets/small.xlsx](./assets/small.xlsx) or structure your spreadsheet like this:
+See [assets/example.xlsx](./assets/example.xlsx) or structure your spreadsheet like this:
 
 | ID     | Comment               | Response                        |
 | ------ | --------------------- | ------------------------------- |
