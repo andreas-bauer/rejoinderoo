@@ -100,9 +100,9 @@ func escapeAllStrings(td *reader.TabularData) {
 func escape(input string) string {
 	// Replace LaTeX special characters with their escaped versions.
 	replacer := strings.NewReplacer(
-		"\\", "\\textbackslash{}",
-		"{", "\\{",
-		"}", "\\}",
+		// keep as is
+		"~\\cite", "~\\cite",
+		// modify
 		"$", "\\$",
 		"&", "\\&",
 		"#", "\\#",

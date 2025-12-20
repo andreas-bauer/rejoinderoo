@@ -184,6 +184,7 @@ func TestLatexFileExtension(t *testing.T) {
 		t.Errorf("FileExtension() = %q; want %q", got, want)
 	}
 }
+
 func TestEscape(t *testing.T) {
 	tests := []struct {
 		input    string
@@ -194,11 +195,8 @@ func TestEscape(t *testing.T) {
 		{"Price is $5", "Price is \\$5"},
 		{"Use #hashtag", "Use \\#hashtag"},
 		{"A_B_C", "A\\_B\\_C"},
-		{"Curly{Braces}", "Curly\\{Braces\\}"},
 		{"Ampersand & more", "Ampersand \\& more"},
-		{"Backslash \\", "Backslash \\textbackslash{}"},
 		{"Tilde~Caret^", "Tilde\\textasciitilde{}Caret\\textasciicircum{}"},
-		{"All $#&_{}%~^\\", "All \\$\\#\\&\\_\\{\\}\\%\\textasciitilde{}\\textasciicircum{}\\textbackslash{}"},
 		{"", ""},
 	}
 
@@ -207,6 +205,26 @@ func TestEscape(t *testing.T) {
 			got := escape(tt.input)
 			if got != tt.expected {
 				t.Errorf("escape(%q) = %q; want %q", tt.input, got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestEscapeShouldStaySame(t *testing.T) {
+	tests := []struct {
+		input string
+	}{
+		{"A previous study by \\citet{bauer2025} showed that XZY."},
+		{"A previous study by Bauer et al. showed that XZY \\cite{bauer2025}."},
+		{"Software testing is a systematic process for the verification and validation of software against its specifications~\\cite{myers2012ArtSoftwareTesting, sommerville2016SoftwareEngineering,washizaki2024SWEBOKGuideSoftware}. Verification\\footnote{Verification: \\emph{``Are we building the product right?''}\\cite{boehm1984verifying}} ensures that the software meets its defined requirements, while validation\\footnote{Validation: \\emph{``Are we building the right product?''}~\\cite{boehm1984verifying}} ensures the software aligns with the customer’s expectations. It involves executing software with defined inputs and assessing the resulting outputs against expected outcomes."},
+		{"Our artifacts are made publicly available on Zenodo\\footnote{\\href{https://zenodo.org}{https://zenodo.org}}"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			got := escape(tt.input)
+			if got != tt.input {
+				t.Errorf("escape(%q) = %q; want %q", tt.input, got, tt.input)
 			}
 		})
 	}
