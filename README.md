@@ -1,12 +1,12 @@
 # Rejoinderoo
 
-<p align="center"><img src="assets/logo.png"></p>
+<p align="center"><img src="assets/logo.png" alt="rejoinderoo logo"></p>
 
 Rejoinderoo creates a rejoinder (response to reviewers) based on a CSV or Excel file.
 The generated document is a LaTeX or Typst file that can be compiled to PDF.
 An example of a generated rejoinder document is shown in [assets/example.pdf](./assets/example.pdf).
 
-<p align="center"><img src="assets/screenshot.png"></p>
+<p align="center"><img src="assets/screenshot.png" alt="screenshot of the rendered PDF"></p>
 
 ## How to use
 
@@ -103,6 +103,6 @@ or you can adjust the security settings in the System Preferences:
 
 ## License
 
-Copyright © 2023-2025 Andreas Bauer
+Copyright © 2023-2026 Andreas Bauer
 
 This work (source code) is licensed under [MIT](./LICENSE).
