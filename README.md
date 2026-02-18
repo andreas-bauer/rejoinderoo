@@ -36,6 +36,8 @@ As a **command-line tool** after you downloaded the binary from the [releases pa
 
 Or use the **web** version at [rejoinderoo.andreasbauer.org](https://rejoinderoo.andreasbauer.org).
 
+<p align="center"><img src="assets/screenshot-web.png" alt="screenshot of the web interface"></p>
+
 ## Development
 
 This project uses a Makefile to manage all build and test tasks.
@@ -61,7 +63,7 @@ make build
 
 You can also build and run the web server in a Docker container.
 
-```sh
+```shg
 # build the Docker image
 make build-docker
 
