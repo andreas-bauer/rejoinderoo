@@ -185,8 +185,8 @@ func (h *Handler) getFormFile(r *http.Request) (multipart.File, *multipart.FileH
 func getFormValuesWithPrefix(formValues url.Values, prefix string) []string {
 	var values []string
 	for key := range formValues {
-		if strings.HasPrefix(key, prefix) {
-			values = append(values, strings.TrimPrefix(key, prefix))
+		if after, ok := strings.CutPrefix(key, prefix); ok {
+			values = append(values, after)
 		}
 	}
 	return values
