@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
+	"charm.land/huh/v2"
+	"charm.land/lipgloss/v2"
 	"github.com/andreas-bauer/rejoinderoo/internal/templates"
-	"github.com/charmbracelet/huh"
-	"github.com/charmbracelet/lipgloss"
 )
 
 type FormData struct {
@@ -42,7 +42,6 @@ func RunForm(fd *FormData) error {
 						return fmt.Errorf("at least three columns need to be selected")
 					}
 					return nil
-
 				}).
 				Value(&fd.SelectedHeaders),
 		),
@@ -74,7 +73,9 @@ func PrintSummary(fd *FormData) {
 	keyword := func(s string) string {
 		return lipgloss.NewStyle().Foreground(lipgloss.Color("212")).Render(s)
 	}
-	fmt.Fprintf(&sb,
+
+	fmt.Fprintf(
+		&sb,
 		"%s\n\nTempate: %s\nFilename: %s\n\n%s\n%s",
 		lipgloss.NewStyle().Bold(true).Render("✅ Rejoinder created"),
 		keyword(fd.Template),
@@ -82,9 +83,8 @@ func PrintSummary(fd *FormData) {
 		"⭐️ If you enjoy this project, please consider giving it a star on GitHub:",
 		keyword("   https://github.com/andreas-bauer/rejoinderoo"),
 	)
-	fmt.Println(
-		lipgloss.NewStyle().
-			Padding(1, 2).
-			Render(sb.String()),
+
+	lipgloss.Println(
+		lipgloss.NewStyle().Padding(1, 2).Render(sb.String()),
 	)
 }
