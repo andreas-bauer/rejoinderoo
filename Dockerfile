@@ -1,12 +1,15 @@
 # syntax=docker/dockerfile:1
 
 # Build stage
-ARG GO_VERSION=tip
+ARG GO_VERSION=1.26
 FROM golang:${GO_VERSION}-alpine AS build
 
-RUN apk add --no-cache make
+RUN apk add --no-cache ca-certificates git make
 
 WORKDIR /app
+
+COPY go.mod go.sum ./
+RUN go mod download
 
 COPY . .
 
