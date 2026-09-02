@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # Build stage
-ARG GO_VERSION=1.26
+ARG GO_VERSION=1.27
 FROM golang:${GO_VERSION}-alpine AS build
 
 RUN apk add --no-cache ca-certificates git make
